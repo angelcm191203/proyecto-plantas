@@ -2,16 +2,17 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Poppins', sans-serif; /* <-- CAMBIADO A POPPINS */
 }
 
 body, input {
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif; /* <-- CAMBIADO A POPPINS */
 }
 
 .container {
   position: relative;
   width: 100%;
-  background-color: #fff;
+  background-color: #FDFBF7; /* El mismo fondo exacto de tu inicio */
   min-height: 100vh;
   overflow: hidden;
 }
@@ -57,23 +58,24 @@ form.sign-in-form {
 }
 
 .title {
-  font-size: 2.2rem;
-  color: #222;
+  font-size: 2.5rem; /* Igualado al tamaño de tus títulos de inicio */
+  color: #473C33;
   margin-bottom: 25px;
-  font-weight: 600;
+  font-weight: 700; /* Negrita idéntica a tus H2 */
 }
 
 .input-field {
   max-width: 380px;
   width: 100%;
-  background-color: #f0f0f0;
+  background-color: #F5F2EB; /* Ajustado al tono suave de tus bordes */
   margin: 10px 0;
   height: 55px;
-  border-radius: 8px;
+  border-radius: 24px; /* Redondeado idéntico a tus tarjetas */
   display: grid;
   grid-template-columns: 100%;
   padding: 0 0.4rem;
   position: relative;
+  border: 1px solid rgba(171, 194, 112, 0.15);
 }
 
 .input-field input {
@@ -83,39 +85,50 @@ form.sign-in-form {
   line-height: 1;
   font-weight: 500;
   font-size: 1.1rem;
-  color: #333;
+  color: #473C33;
   padding: 0 15px;
 }
 
 .input-field input::placeholder {
-  color: #aaa;
+  color: #A1968E;
   font-weight: 400;
 }
 
 .forgot-password {
-  color: #777;
-  font-size: 0.9rem;
+  color: #61554A; /* Color de tus párrafos en el inicio */
+  font-size: 0.95rem;
   text-decoration: none;
   margin: 10px 0 20px 0;
+  transition: 0.3s ease;
+  font-weight: 500;
 }
 
+.forgot-password:hover {
+  color: #ABC270;
+  text-decoration: underline;
+}
+
+/* --- BOTONES ESTILO PÍLDORA (COMO TU HERO) --- */
 .btn {
-  width: 150px;
-  background-color: #019292; /*color del boton*/
+  width: 160px;
+  background-color: #FEC868; /* Amarillo mostaza de tu paleta */
   border: none;
   outline: none;
-  height: 49px;
-  border-radius: 8px;
-  color: #fff;
+  height: 50px;
+  border-radius: 25px; /* Forma de píldora redonda perfecta */
+  color: #473C33;
   text-transform: uppercase;
   font-weight: 600;
   margin: 10px 0;
   cursor: pointer;
-  transition: 0.5s;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 15px rgba(254, 200, 104, 0.3);
 }
 
 .btn:hover {
-  background-color: #37f7da; /*color al presionar el boton*/
+  background-color: #FDA769; /* El cambio a naranja suave al pasar el cursor */
+  box-shadow: 0 6px 20px rgba(253, 167, 105, 0.4);
+  transform: translateY(-2px);
 }
 
 .panels-container {
@@ -128,7 +141,7 @@ form.sign-in-form {
   grid-template-columns: repeat(2, 1fr);
 }
 
-/*transición*/
+/* --- CÍRCULO INTERMEDIO EN DEGRADADO --- */
 .container:before {
   content: "";
   position: absolute;
@@ -137,7 +150,8 @@ form.sign-in-form {
   top: -10%;
   right: 48%;
   transform: translateY(-50%);
-  background: linear-gradient(-45deg, #019292 0%, #37f7da 100%); /*color intermedio en transicion "login"*/
+  /* Combina tu verde oliva con el fondo claro de tu hero */
+  background: linear-gradient(-45deg, #ABC270 0%, #F5F7EE 100%); 
   transition: 1.8s ease-in-out;
   border-radius: 50%;
   z-index: 6;
@@ -163,38 +177,49 @@ form.sign-in-form {
 }
 
 .panel .content {
-  color: #fff;
+  color: #473C33;
   transition: transform 0.9s ease-in-out;
   transition-delay: 0.6s;
 }
 
 .panel h3 {
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1;
-  font-size: 1.8rem;
+  font-size: 2rem;
+  margin-bottom: 10px;
 }
 
 .panel p {
-  font-size: 0.95rem;
+  font-size: 1.05rem;
+  font-weight: 500;
   padding: 0.7rem 0;
+  color: #61554A;
 }
 
+/* Botones transparentes de los paneles */
 .btn.transparent {
   margin: 0;
   background: none;
-  border: 2px solid #fff;
-  width: 130px;
-  height: 41px;
+  border: 2px solid #473C33;
+  color: #473C33;
+  width: 140px;
+  height: 44px;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  border-radius: 25px;
+  box-shadow: none;
+}
+
+.btn.transparent:hover {
+  background-color: #473C33;
+  color: #FDFBF7;
 }
 
 .right-panel .content {
   transform: translateX(800px);
 }
 
-/* --- ANIMACIONES DE DESLIZAMIENTO (SIGN-UP MODE ACTIVE) --- */
-
+/* --- ANIMACIONES DE DESLIZAMIENTO --- */
 .container.sign-up-mode:before {
   transform: translate(100%, -50%);
   right: 52%;
@@ -229,10 +254,12 @@ form.sign-in-form {
 .container.sign-up-mode .right-panel {
   pointer-events: all;
 }
+
+/* --- ICONOS REDES SOCIALES --- */
 .social-media {
   display: flex;
   justify-content: center;
-  margin: 10px 0;
+  margin: 10px 0 20px 0;
 }
 
 .social-icon {
@@ -242,17 +269,309 @@ form.sign-in-form {
   justify-content: center;
   align-items: center;
   margin: 0 0.45rem;
-  color: #333;
+  color: #473C33;
   border-radius: 50%;
-  border: 1px solid #333;
+  border: 1px solid #473C33;
   text-decoration: none;
   font-size: 1.1rem;
   transition: 0.3s;
 }
 
-/* Efecto visual cuando el usuario pasa el cursor encima */
 .social-icon:hover {
-  color: #1abc9c;
-  border-color: #1abc9c;
+  color: #ABC270;
+  border-color: #ABC270;
   transform: scale(1.1);
+}/* --- CONFIGURACIÓN GENERAL --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body, input {
+  font-family: 'Poppins', sans-serif;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  background-color: #FDFBF7; /* El fondo crema claro de tu inicio */
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.forms-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.signin-signup {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 75%;
+  width: 50%;
+  transition: 1s 0.7s ease-in-out;
+  display: grid;
+  grid-template-columns: 1fr;
+  z-index: 5;
+}
+
+form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0rem 5rem;
+  transition: all 0.2s 0.7s;
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+
+form.sign-up-form {
+  opacity: 0;
+  z-index: 1;
+}
+
+form.sign-in-form {
+  z-index: 2;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: #473C33; /* El tono oscuro orgánico */
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+/* --- CAMPOS DE ENTRADA (INPUTS) --- */
+.input-field {
+  max-width: 380px;
+  width: 100%;
+  background-color: #F5F2EB; /* Color suave para las cajas de texto */
+  margin: 10px 0;
+  height: 55px;
+  border-radius: 24px; /* Bordes redondeados idénticos a tus componentes */
+  display: grid;
+  grid-template-columns: 100%;
+  padding: 0 0.4rem;
+  position: relative;
+  border: 1px solid rgba(171, 194, 112, 0.15);
+}
+
+.input-field input {
+  background: none;
+  outline: none;
+  border: none;
+  line-height: 1;
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: #473C33;
+  padding: 0 15px;
+}
+
+.input-field input::placeholder {
+  color: #A1968E;
+  font-weight: 400;
+}
+
+.forgot-password {
+  color: #61554A;
+  font-size: 0.95rem;
+  text-decoration: none;
+  margin: 10px 0 20px 0;
+  transition: 0.3s ease;
+  font-weight: 500;
+}
+
+.forgot-password:hover {
+  color: #ABC270;
+  text-decoration: underline;
+}
+
+/* --- BOTONES PRINCIPALES (TIPO PÍLDORA) --- */
+.btn {
+  width: 180px;
+  background-color: #FEC868; /* El amarillo mostaza de tu paleta */
+  border: none;
+  outline: none;
+  height: 50px;
+  border-radius: 25px; /* Forma de píldora perfecta */
+  color: #473C33;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin: 12px 0;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 15px rgba(254, 200, 104, 0.25);
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.btn:hover {
+  background-color: #FDA769; /* Cambio a naranja suave como tu navbar */
+  box-shadow: 0 6px 20px rgba(253, 167, 105, 0.35);
+  transform: translateY(-2px);
+}
+
+/* --- BOTONES TRANSPARENTES DE LOS PANELES DESLIZANTES --- */
+.btn.transparent {
+  margin: 0;
+  background: transparent;
+  border: 2px solid #473C33; /* Borde oscuro para máxima legibilidad */
+  color: #473C33;
+  width: 160px;
+  height: 46px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 25px;
+  box-shadow: none;
+  transition: 0.3s ease;
+}
+
+.btn.transparent:hover {
+  background-color: #473C33;
+  color: #FDFBF7; /* Invierte colores en hover */
+}
+
+/* --- CONTENEDORES Y PANELES DE ANIMACIÓN --- */
+.panels-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* El círculo de transición adaptado a tus tonos orgánicos */
+.container:before {
+  content: "";
+  position: absolute;
+  height: 2000px;
+  width: 2000px;
+  top: -10%;
+  right: 48%;
+  transform: translateY(-50%);
+  background: linear-gradient(-45deg, #ABC270 0%, #F5F7EE 100%); 
+  transition: 1.8s ease-in-out;
+  border-radius: 50%;
+  z-index: 6;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px; /* Distribución uniforme */
+  text-align: center;
+  z-index: 6;
+}
+
+.left-panel {
+  pointer-events: all;
+  padding: 3rem 17% 2rem 12%;
+}
+
+.right-panel {
+  pointer-events: none;
+  padding: 3rem 12% 2rem 17%;
+}
+
+.panel .content {
+  color: #473C33;
+  transition: transform 0.9s ease-in-out;
+  transition-delay: 0.6s;
+}
+
+.panel h3 {
+  font-weight: 700;
+  line-height: 1.2;
+  font-size: 2.2rem;
+}
+
+.panel p {
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.6;
+  max-width: 300px;
+  margin: 0 auto;
+  color: #61554A;
+}
+
+.right-panel .content {
+  transform: translateX(800px);
+}
+
+/* --- ANIMACIONES DE DESLIZAMIENTO --- */
+.container.sign-up-mode:before {
+  transform: translate(100%, -50%);
+  right: 52%;
+}
+
+.container.sign-up-mode .signin-signup {
+  left: 25%;
+}
+
+.container.sign-up-mode form.sign-up-form {
+  opacity: 1;
+  z-index: 2;
+}
+
+.container.sign-up-mode form.sign-in-form {
+  opacity: 0;
+  z-index: 1;
+}
+
+.container.sign-up-mode .right-panel .content {
+  transform: translateX(0%);
+}
+
+.container.sign-up-mode .left-panel .content {
+  transform: translateX(-800px);
+}
+
+.container.sign-up-mode .left-panel {
+  pointer-events: none;
+}
+
+.container.sign-up-mode .right-panel {
+  pointer-events: all;
+}
+
+/* --- ICONOS DE REDES SOCIALES --- */
+.social-media {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0 25px 0;
+  gap: 12px;
+}
+
+.social-icon {
+  height: 46px;
+  width: 46px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #473C33;
+  border-radius: 50%; /* Círculo perfecto */
+  border: 1px solid rgba(71, 60, 51, 0.2);
+  background-color: #FDFBF7;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 10px rgba(71, 60, 51, 0.04);
+}
+
+.social-icon:hover {
+  color: #ABC270; /* Verde oliva al pasar el cursor */
+  border-color: #ABC270;
+  background-color: #F5F7EE;
+  transform: scale(1.08);
 }

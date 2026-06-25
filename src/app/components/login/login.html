@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
-    <link rel="stylesheet" href="login.css">
-</head>
-<body>
-    <div class="container" [ngClass]="{'sign-up-mode': isSignUpMode}">
+<div class="container" [ngClass]="{'sign-up-mode': isSignUpMode}">
   <div class="forms-container">
     <div class="signin-signup">
       
@@ -29,19 +20,11 @@
       <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="sign-up-form">
         <h2 class="title">Registrarse</h2>
         <div class="social-media">
-  <a href="#" class="social-icon">
-    <i class="fab fa-facebook-f"></i>
-  </a>
-  <a href="#" class="social-icon">
-    <i class="fab fa-twitter"></i>
-  </a>
-  <a href="#" class="social-icon">
-    <i class="fab fa-instagram"></i>
-  </a>
-  <a href="#" class="social-icon">
-    <i class="fab fa-tiktok"></i>
-  </a>
-</div>
+          <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+        </div>
         
         <div class="input-field">
           <input type="text" placeholder="Nombre Completo" formControlName="nombre" />
@@ -83,5 +66,3 @@
     </div>
   </div>
 </div>
-</body>
-</html>

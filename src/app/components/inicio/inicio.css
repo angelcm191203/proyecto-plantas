@@ -1,0 +1,670 @@
+*{
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+    font-family: 'Poppins', sans-serif;
+
+}
+
+
+
+html{
+
+    scroll-behavior: smooth;
+
+}
+
+
+
+body{
+
+    background: #FDFBF7;
+
+    color: #473C33;
+
+}
+
+
+
+::selection {
+
+    background-color: #FEC868;
+
+    color: #473C33;
+
+}
+
+
+
+.navbar{
+
+    width: 100%;
+
+    height: 80px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 0 8%;
+
+    background: #ffffff;
+
+    position: fixed;
+
+    top: 0;
+
+    z-index: 1000;
+
+    box-shadow: 0 4px 20px rgba(71, 60, 51, 0.05);
+
+}
+
+
+
+.logo{
+
+    font-size: 1.8rem;
+
+    font-weight: 700;
+
+    color: #473C33;
+
+    letter-spacing: -0.5px;
+
+}
+
+
+
+.menu{
+
+    display: flex;
+
+    list-style: none;
+
+    gap: 35px;
+
+}
+
+
+
+.menu a{
+
+    text-decoration: none;
+
+    color: #473C33;
+
+    font-weight: 500;
+
+    transition: .3s ease;
+
+}
+
+
+
+.menu a:hover{
+
+    color: #ABC270;
+
+}
+
+
+
+.nav-buttons{
+
+    display: flex;
+
+    gap: 12px;
+
+}
+
+
+
+.btn-nav{
+
+    border: none;
+
+    padding: 10px 22px;
+
+    border-radius: 25px;
+
+    cursor: pointer;
+
+    transition: .3s ease;
+
+    font-weight: 600;
+
+    font-size: 0.95rem;
+
+}
+
+
+
+.login{
+
+    background: transparent;
+
+    border: 2px solid #ABC270;
+
+    color: #ABC270;
+
+}
+
+
+
+.login:hover{
+
+    background: rgba(171, 194, 112, 0.1);
+
+}
+
+
+
+.register{
+
+    background: #FEC868;
+
+    color: #473C33;
+
+}
+
+
+
+.register:hover{
+
+    background: #FDA769;
+
+    transform: translateY(-2px);
+
+}
+
+
+
+.hero{
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 120px 8% 50px;
+
+    background: linear-gradient(135deg, #FDFBF7 0%, #F5F7EE 100%);
+
+}
+
+
+
+.hero-text{
+
+    width: 50%;
+
+}
+
+
+
+.hero-text h1{
+
+    font-size: 3.4rem;
+
+    color: #473C33;
+
+    line-height: 1.2;
+
+    margin-bottom: 20px;
+
+    font-weight: 700;
+
+}
+
+
+
+.hero-text p{
+
+    color: #61554A;
+
+    font-size: 1.1rem;
+
+    line-height: 1.8;
+
+}
+
+
+
+.hero-btn{
+
+    margin-top: 30px;
+
+    padding: 15px 38px;
+
+    border: none;
+
+    background: #FEC868;
+
+    color: #473C33;
+
+    border-radius: 30px;
+
+    cursor: pointer;
+
+    font-size: 1rem;
+
+    font-weight: 600;
+
+    box-shadow: 0 4px 15px rgba(254, 200, 104, 0.3);
+
+    transition: .3s ease;
+
+}
+
+
+
+.hero-btn:hover{
+
+    background: #FDA769;
+
+    box-shadow: 0 6px 20px rgba(253, 167, 105, 0.4);
+
+    transform: translateY(-2px);
+
+}
+
+
+
+.hero-image{
+
+    width: 45%;
+
+    display: flex;
+
+    justify-content: center;
+
+}
+
+
+
+.hero-image img{
+
+    width: 90%;
+
+    max-height: 450px;
+
+    object-fit: contain;
+
+    animation: float 4s ease-in-out infinite;
+
+}
+
+
+
+@keyframes float{
+
+    0% { transform: translateY(0); }
+
+    50% { transform: translateY(-12px); }
+
+    100% { transform: translateY(0); }
+
+}
+
+
+
+.about{
+
+    padding: 100px 12%;
+
+    text-align: center;
+
+    background: #FDFBF7;
+
+}
+
+
+
+.about h2,
+
+.features h2,
+
+.carousel-section h2,
+
+.cta h2 {
+
+    color: #473C33;
+
+    margin-bottom: 20px;
+
+    font-size: 2.5rem;
+
+    font-weight: 700;
+
+}
+
+
+
+.about p{
+
+    max-width: 850px;
+
+    margin: auto;
+
+    color: #61554A;
+
+    font-size: 1.15rem;
+
+    line-height: 1.9;
+
+}
+
+
+
+.mission-section{
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 40px;
+
+    padding: 20px 10% 100px;
+
+    flex-wrap: wrap;
+
+    background: #FDFBF7;
+
+}
+
+
+
+.card{
+
+    width: 450px;
+
+    background: #ffffff;
+
+    padding: 40px;
+
+    border-radius: 24px;
+
+    box-shadow: 0 10px 30px rgba(71, 60, 51, 0.04);
+
+    transition: .3s ease;
+
+    border: 1px solid #F5F2EB;
+
+}
+
+
+
+.card:hover{
+
+    transform: translateY(-6px);
+
+    box-shadow: 0 15px 35px rgba(171, 194, 112, 0.15);
+
+}
+
+
+
+.card h3{
+
+    color: #ABC270;
+
+    margin-bottom: 15px;
+
+    font-size: 1.5rem;
+
+    font-weight: 600;
+
+}
+
+
+
+.card p{
+
+    color: #61554A;
+
+    line-height: 1.7;
+
+}
+
+
+
+.features{
+
+    padding: 100px 10%;
+
+    background: #F5F7EE;
+
+    text-align: center;
+
+}
+
+
+
+.feature-container{
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+
+    gap: 30px;
+
+    margin-top: 50px;
+
+}
+
+
+
+.feature-card{
+
+    background: #ffffff;
+
+    padding: 35px 25px;
+
+    border-radius: 24px;
+
+    transition: .3s ease;
+
+    border: 1px solid rgba(171, 194, 112, 0.15);
+
+}
+
+
+
+.feature-card:hover{
+
+    transform: translateY(-6px);
+
+    box-shadow: 0 12px 25px rgba(71, 60, 51, 0.06);
+
+}
+
+
+
+.icon{
+
+    font-size: 2.8rem;
+
+    margin-bottom: 20px;
+
+    display: inline-block;
+
+    padding: 15px;
+
+    background: #FDFBF7;
+
+    border-radius: 20px;
+
+}
+
+
+
+.feature-card h3{
+
+    color: #473C33;
+
+    margin-bottom: 12px;
+
+    font-size: 1.3rem;
+
+    font-weight: 600;
+
+}
+
+
+
+.feature-card p{
+
+    color: #61554A;
+
+    font-size: 0.95rem;
+
+    line-height: 1.6;
+
+}
+
+
+
+.carousel-section{
+
+    padding: 100px 0;
+
+    overflow: hidden;
+
+    background: #FDFBF7;
+
+    text-align: center;
+
+}
+
+
+
+.carousel-section h2{
+
+    margin-bottom: 40px;
+
+}
+
+
+
+.slider{
+
+    width: 100%;
+
+    overflow: hidden;
+
+    padding: 10px 0;
+
+}
+
+
+
+.slide-track{
+
+    display: flex;
+
+    width: calc(280px * 8);
+
+    animation: scroll 30s linear infinite;
+
+}
+
+
+
+.slide{
+
+    width: 280px;
+
+    margin: 0 15px;
+
+}
+
+
+
+.slide img{
+
+    width: 100%;
+
+    height: 200px;
+
+    object-fit: cover;
+
+    border-radius: 24px;
+
+    box-shadow: 0 8px 25px rgba(71, 60, 51, 0.08);
+
+    transition: .3s ease;
+
+}
+
+
+
+.slide img:hover{
+
+    transform: scale(1.03);
+
+}
+
+
+
+@keyframes scroll{
+
+    0% { transform: translateX(0); }
+
+    100% { transform: translateX(calc(-280px * 4)); }
+
+}
+
+
+
+.cta{
+
+    padding: 110px 10%;
+
+    text-align: center;
+
+    background: #F5F7EE;
+
+}
+
+
+
+.cta h2{
+
+    max-width: 700px;
+
+    margin: 0 auto 30px;
+
+    font-size: 2.3rem;
+
+    line-height: 1.4;
+
+}
+
+
+
+footer{
+
+    background: #473C33;
+
+    color: #FDFBF7;
+
+    text-align: center;
+
+    padding: 30px 20px;
+
+    font-size: 0.95rem;
+
+    letter-spacing: 0.5px;
+
+}
+

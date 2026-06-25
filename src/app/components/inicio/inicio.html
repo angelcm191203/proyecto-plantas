@@ -1,0 +1,153 @@
+<div class="navbar">
+  <div class="logo">
+    WeatherPlant
+  </div>
+
+  <ul class="menu">
+    <li><a href=" #inicio">Inicio</a></li>
+    <li><a href=" #nosotros">Nosotros</a></li>
+    <li><a href="#funciones">Funciones</a></li>
+  </ul>
+
+  <div class="nav-buttons">
+    <button class="btn-nav login" [routerLink]="['/login']" [queryParams]="{ modo: 'login' }">Iniciar Sesión</button>
+    <button class="btn-nav register" [routerLink]="['/login']" [queryParams]="{ modo: 'registro' }">Crear cuenta</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-text">
+    <h1>Cultiva de forma inteligente</h1>
+    <p>
+      Una plataforma web diseñada para apoyar el cuidado de plantas y cultivos,
+      ofreciendo recomendaciones basadas en el pronóstico del clima y un sistema
+      de seguimiento para mejorar su desarrollo.
+    </p>
+
+
+  </div>
+
+  <div class="hero-image">
+    <img src="assets/img/planta-principal.png" alt="Cultivos">
+  </div>
+</section>
+
+<!-- SOBRE NOSOTROS -->
+<section class="about" id="nosotros">
+  <h2>¿Qué es WeatherPlant?</h2>
+  <p>
+    WeatherPlant es una plataforma orientada a agricultores, estudiantes y personas
+    aficionadas a la jardinería, que busca facilitar el cuidado de cultivos
+    mediante información climática, recomendaciones y un registro organizado
+    de actividades importantes.
+  </p>
+</section>
+
+<!-- MISION Y VISION -->
+<section class="mission-section">
+  <div class="card">
+    <h3>Misión</h3>
+    <p>
+      Facilitar el cuidado de plantas y cultivos mediante herramientas
+      tecnológicas accesibles que ayuden a los usuarios a tomar mejores
+      decisiones.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Visión</h3>
+    <p>
+      Ser una plataforma de apoyo para la agricultura y la jardinería,
+      promoviendo el uso de la tecnología para mejorar la productividad
+      y el cuidado responsable de los cultivos.
+    </p>
+  </div>
+</section>
+
+<!-- FUNCIONES -->
+<section class="features" id="funciones">
+  <h2>¿Qué podrás hacer?</h2>
+
+  <div class="feature-container">
+
+    <div class="feature-card">
+      <div class="icon">🌦️</div>
+      <h3>Pronóstico Climático</h3>
+      <p>Consulta el clima estimado para anticiparte a cambios ambientales.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">🌱</div>
+      <h3>Catálogo de Cultivos</h3>
+      <p>Conoce las características y cuidados básicos de distintos cultivos.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">💡</div>
+      <h3>Guía de Cuidados</h3>
+      <p>Obtén recomendaciones sobre riego y mantenimiento según el clima.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">📝</div>
+      <h3>Bitácora</h3>
+      <p>Registra las actividades realizadas y lleva un seguimiento de tus plantas.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- CARRUSEL -->
+<section class="carousel-section">
+  <h2>Descubre nuestra plataforma</h2>
+
+  <div class="slider">
+    <div class="slide-track">
+
+      <div class="slide">
+        <img src="assets/img/cultivo1.jpg" alt="">
+      </div>
+
+      <div class="slide">
+        <img src="assets/img/cultivo2.jpg" alt="">
+      </div>
+
+      <div class="slide">
+        <img src="assets/img/cultivo3.jpg" alt="">
+      </div>
+
+      <div class="slide">
+        <img src="assets/img/cultivo4.jpg" alt="">
+      </div>
+
+      <!-- Se repiten para crear el efecto infinito -->
+      <div class="slide">
+        <img src="assets/img/cultivo1.jpg" alt="">
+      </div>
+
+      <div class="slide">
+        <img src="assets/img/cultivo2.jpg" alt="">
+      </div>
+
+      <div class="slide">
+        <img src="assets/img/cultivo3.jpg" alt="">
+      </div>
+
+      <div class="slide">
+        <img src="assets/img/cultivo4.jpg" alt="">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Empieza a cuidar tus cultivos con ayuda de la tecnología.</h2>
+
+</section>
+
+<footer>
+  <p>© 2026 WeatherPlant | Proyecto Integrador UTTEC</p>
+</footer>
