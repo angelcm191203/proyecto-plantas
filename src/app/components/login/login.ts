@@ -1,55 +1,77 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms'; 
+import { AuthService } from '../../service/auth.service'; // Importa tu servicio
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], 
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
 export class LoginComponent implements OnInit {
-  // Esta es la variable que controla el diseño que hizo tu compañero
-  isSignUpMode: boolean = false; 
+  loginForm!: FormGroup;
+  registerForm!: FormGroup;
+  isSignUpMode: boolean = false;
 
-  // Definición básica de formularios (por si los necesitas inicializar)
-  loginForm = new FormGroup({
-    email: new FormControl(''),
-    password: new FormControl('')
-  });
+  constructor(
+    private fb: FormBuilder, 
+    private router: Router,
+    private auth: AuthService 
+  ) {}
 
-  registerForm = new FormGroup({
-    nombre: new FormControl(''),
-    email: new FormControl(''),
-    password: new FormControl(''),
-    ubicacion: new FormControl('')
-  });
+  ngOnInit(): void {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]]
+    });
 
-  constructor(private route: ActivatedRoute) {}
-
-  ngOnInit() {
-    // Escuchamos si vienen desde "Crear cuenta" o "Iniciar sesión"
-    this.route.queryParams.subscribe(params => {
-      if (params['modo'] === 'registro') {
-        this.isSignUpMode = true; // Activa la animación hacia el formulario de registro
-      } else {
-        this.isSignUpMode = false; // Mantiene el formulario de login normal
-      }
+    this.registerForm = this.fb.group({
+      nombre: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
+      ubicacion: ['', [Validators.required]]
     });
   }
 
-  // Función para cambiar de modo al interactuar con los botones internos transparentes
-  toggleMode(isSignUp: boolean) {
-    this.isSignUpMode = isSignUp;
+  toggleMode(status: boolean): void {
+    this.isSignUpMode = status;
   }
 
-  onLoginSubmit() {
-    console.log('Login data:', this.loginForm.value);
+  onLoginSubmit(): void {
+    if (this.loginForm.valid) {
+      const { email, password } = this.loginForm.value;
+
+      if (password === '123456') {
+        if (email === 'angel@weatherplant.com') {
+          this.auth.iniciarSesion('Angel');
+        } else if (email === 'michel@weatherplant.com') {
+          this.auth.iniciarSesion('Michel');
+        } else {
+          this.auth.iniciarSesion('UsuarioCliente');
+        }
+
+        // Aquí está el cambio: redirigimos a la nueva ruta /admin/credenciales
+        if (this.auth.esAdministrador()) {
+          this.router.navigate(['/admin/credenciales']); 
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
+      } else {
+        alert('Credenciales incorrectas.');
+      }
+    }
   }
 
-  onRegisterSubmit() {
-    console.log('Register data:', this.registerForm.value);
+  onRegisterSubmit(): void {
+    if (this.registerForm.valid) {
+      console.log('Datos de registro:', this.registerForm.value);
+      alert('Registro simulado con éxito. Ahora puedes iniciar sesión.');
+      this.isSignUpMode = false;
+    } else {
+      alert('Por favor, completa todos los campos del formulario de registro.');
+    }
   }
 }

@@ -1,26 +1,28 @@
 import { Routes } from '@angular/router';
-import { Inicio } from './components/inicio/inicio'; // <-- 1. AÑADE ESTA IMPORTACIÓN
+import { InicioComponent } from './components/inicio/inicio';
 import { LoginComponent } from './components/login/login';
-import { MisPlantas } from './components/mis-plantas/mis-plantas';
-import { NuevaPlanta } from './components/nueva-planta/nueva-planta';
-import { HistoricoPlantas } from './components/historico-plantas/historico-plantas';
+import { DashboardComponent } from './components/dashboard/dashboard';
+import { Credenciales } from './administradores/admin/credenciales/credenciales';
+import { Peticiones } from './administradores/admin/peticiones/peticiones';
+import { adminGuard } from './service/auth.guard';
+import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 
 export const routes: Routes = [
-  // 2. MODIFICA ESTA RUTA: Ahora la pantalla inicial por defecto será el Inicio
-  { path: '', component: Inicio },
-
-  // Ruta para el Login (aquí llegarán al pulsar los botones de inicio o crear cuenta)
-  { path: 'login', component: LoginComponent},
-
-  // Ruta para el Dashboard (Mis Plantas)
-  { path: 'mis-plantas', component: MisPlantas },
-
-  // Ruta para Registrar una Nueva Planta
-  { path: 'nueva-planta', component: NuevaPlanta },
-
-  // Ruta para el Histórico / Bitácora
-  { path: 'historico', component: HistoricoPlantas },
-
-  // 3. MODIFICA EL COMODÍN: Si escriben una ruta inexistente, los regresa al inicio
+  // 1. Ruta de administrador primero para mayor prioridad
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    canActivate: [adminGuard], // Cuando verifiques que carga, quita el comentario
+    children: [
+      { path: '', redirectTo: 'credenciales', pathMatch: 'full' },
+      { path: 'credenciales', component: Credenciales },
+      { path: 'peticiones', component: Peticiones }
+    ]
+  },
+  // 2. Rutas estándar
+  { path: 'login', component: LoginComponent },
+  { path: 'dashboard', component: DashboardComponent },
+  { path: '', component: InicioComponent },
+  // 3. Comodín al final
   { path: '**', redirectTo: '' }
 ];

@@ -7,4 +7,4 @@ import { RouterLink } from '@angular/router'; // <-- 1. IMPORTA EL ROUTERLINK
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
 })
-export class Inicio {} // Tu clase se queda con el nombre 'Inicio'
+export class InicioComponent {}

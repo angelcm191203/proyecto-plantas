@@ -1,1 +1,86 @@
-<p>nueva-planta works!</p>
+<div class="catalogo-container">
+  <h2>Catálogo de Plantas</h2>
+  <p>Selecciona una especie para iniciar su monitoreo.</p>
+
+  <!-- Botón de solicitud -->
+  <button class="btn-solicitar" (click)="abrirModal()">
+    + ¿No encuentras tu planta? Solicítala aquí
+  </button>
+
+  <!-- Formulario de solicitud (se muestra solo cuando mostrarFormulario es true) -->
+  <div *ngIf="mostrarFormulario" class="modal-solicitud">
+    <div class="modal-contenido">
+      <h3>Solicitar nueva planta</h3>
+      <form (submit)="enviarSolicitud($event)">
+        <label>Nombre de la planta:</label>
+        <input type="text" placeholder="Ej: Romero" required>
+        
+        <label>¿Por qué quieres agregarla?</label>
+        <textarea placeholder="Describe el por que te gustaria agregarla"></textarea>
+        
+        <div class="modal-acciones">
+          <button type="button" (click)="cerrarModal()" class="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn-enviar">Enviar solicitud</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+    <div class="plant-card">
+      <img src="planta8.jpg" alt="Cebolla" class="plant-img">
+      <h3>Cebolla</h3>
+      <p>Clima: Cálido</p>
+      <button class="btn-agregar">Agregar planta</button>
+    </div>
+
+    <div class="plant-card">
+      <img src="planta11.jpg" alt="Habanero" class="plant-img">
+      <h3>Habanero</h3>
+      <p>Clima: Aquí el clima</p>
+      <button class="btn-agregar">Agregar planta</button>
+    </div>
+
+    <div class="plant-card">
+      <img src="planta5.jpg" alt="Ajo" class="plant-img">
+      <h3>Ajo</h3>
+      <p>Clima: Aquí el clima</p>
+      <button class="btn-agregar">Agregar planta</button>
+    </div>
+
+    <div class="plant-card">
+      <img src="planta1.jpg" alt="Chile" class="plant-img">
+      <h3>Chile</h3>
+      <p>Clima: Aquí el clima</p>
+      <button class="btn-agregar">Agregar planta</button>
+    </div>
+
+    <div class="plant-card">
+      <img src="planta4.jpg" alt="Coliflor" class="plant-img">
+      <h3>Coliflor</h3>
+      <p>Clima: Aquí el clima</p>
+      <button class="btn-agregar">Agregar planta</button>
+    </div>
+
+    <div class="plant-card">
+      <img src="planta10.jpg" alt="Elote" class="plant-img">
+      <h3>Elote</h3>
+      <p>Clima: Aquí el clima</p>
+      <button class="btn-agregar">Agregar planta</button>
+    </div>
+
+    <div class="plant-card">
+      <img src="planta6.jpg" alt="Jitomate" class="plant-img">
+      <h3>Jitomate</h3>
+      <p>Clima: Aquí el clima</p>
+      <button class="btn-agregar">Agregar planta</button>
+    </div>
+
+    <div class="plant-card">
+      <img src="planta9.jpg" alt="Fresa" class="plant-img">
+      <h3>Fresa</h3>
+      <p>Clima: Aquí el clima</p>
+      <button class="btn-agregar">Agregar planta</button>
+    </div>
+  </div>
+</div>

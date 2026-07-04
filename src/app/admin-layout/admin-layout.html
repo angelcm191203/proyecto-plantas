@@ -1,0 +1,17 @@
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <div class="brand-title">WeatherPlant</div>
+    <nav class="menu-nav">
+      <button class="menu-btn" routerLink="/admin/credenciales" routerLinkActive="active">
+        Gestión de Credenciales
+      </button>
+      <button class="menu-btn" routerLink="/admin/peticiones" routerLinkActive="active">
+        Peticiones de Plantas
+      </button>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
