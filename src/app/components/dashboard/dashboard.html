@@ -1,18 +1,30 @@
 <div class="dashboard-layout">
-  <!-- Menú lateral izquierdo  -->
   <aside class="sidebar">
     <h1 class="brand-title">WeatherPlant</h1>
+    
     <nav class="menu-nav">
-      <button class="menu-btn"><span class="icon">⛅</span> Clima</button>
-      <button class="menu-btn"><span class="icon">🌱</span> Mis Plantas</button>
-      <button class="menu-btn active"><span class="icon">➕</span> Agregar Planta</button>
-      <button class="menu-btn"><span class="icon">📋</span> Historial</button>
+      <button class="menu-btn" [class.active]="seccionActiva === 'clima'" (click)="navegar('clima')">
+        <span class="icon">⛅</span> Clima
+      </button>
+      <button class="menu-btn" [class.active]="seccionActiva === 'mis-plantas'" (click)="navegar('mis-plantas')">
+        <span class="icon">🌱</span> Mis Plantas
+      </button>
+      <button class="menu-btn" [class.active]="seccionActiva === 'agregar'" (click)="navegar('agregar')">
+        <span class="icon">➕</span> Agregar Planta
+      </button>
+      <button class="menu-btn" [class.active]="seccionActiva === 'bitacora'" (click)="navegar('bitacora')">
+        <span class="icon">📋</span> Bitacora
+      </button>
     </nav>
+    
+    <div class="sidebar-footer">
+      <button class="menu-btn logout-btn" (click)="cerrarSesion()">
+        <span class="icon">🚪</span> Cerrar Sesión
+      </button>
+    </div>
   </aside>
 
-  
   <main class="main-content">
-
-    <app-nueva-planta></app-nueva-planta>
+    <router-outlet></router-outlet> 
   </main>
 </div>

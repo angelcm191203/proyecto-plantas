@@ -1,0 +1,102 @@
+<main class="clima-container">
+  
+  <div class="clima-header">
+    <div class="header-text">
+      <h2>🌤️ Panel de Monitoreo Climático</h2>
+      <p>Información meteorológica en tiempo real vinculada a las necesidades de tu huerto</p>
+    </div>
+    <button class="btn-refresh" (click)="cargarDatosClima()" [disabled]="cargando()">
+      <i class="fas fa-rotate" [class.fa-spin]="cargando()"></i> Actualizar API
+    </button>
+  </div>
+
+  @if (cargando()) {
+    <div class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Sincronizando matriz meteorológica...</p>
+    </div>
+  } @else {
+    
+    <div class="clima-panoramic-card" [ngClass]="obtenerEstiloAtmosferico()">
+      
+      <div class="scenery-zone">
+        <img [src]="datosClima().gatitoUrl" [alt]="datosClima().estado" class="cat-full-body">
+      </div>
+
+      <div class="weather-info-core">
+        <div class="location-tag">
+          <i class="fas fa-location-dot"></i> <span>{{ ubicacionActual() }}</span>
+        </div>
+        <h1 class="main-degrees">{{ datosClima().temperatura }}°C</h1>
+        <h2 class="condition-title">{{ datosClima().estado }}</h2>
+        <div class="sub-weather-stats">
+          <span>Sensación: {{ datosClima().sensacion }}°C</span>
+          <span>•</span>
+          <span>{{ datosClima().maxMin }}</span>
+        </div>
+      </div>
+
+      <div class="weather-glass-metrics">
+        <div class="glass-metric-item">
+          <i class="fas fa-wind"></i>
+          <div>
+            <span class="v">{{ datosClima().viento }} km/h</span>
+            <span class="l">Viento</span>
+          </div>
+        </div>
+        <div class="glass-metric-item">
+          <i class="fas fa-cloud-rain"></i>
+          <div>
+            <span class="v">{{ datosClima().lluviaProb }}%</span>
+            <span class="l">Humedad / Prob.</span>
+          </div>
+        </div>
+        <div class="glass-metric-item">
+          <i class="fas fa-sun"></i>
+          <div>
+            <span class="v">{{ datosClima().uv }}</span>
+            <span class="l">Índice UV</span>
+          </div>
+        </div>
+        <div class="glass-metric-item">
+          <i class="fas fa-eye"></i>
+          <div>
+            <span class="v">{{ datosClima().solPct }}%</span>
+            <span class="l">Visibilidad Sol</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="recomendaciones-title">
+      <h3>🐾 Recomendaciones del Gatito Meteorólogo</h3>
+    </div>
+
+    <div class="recomendaciones-row">
+      <div class="card-tip-box border-riego">
+        <div class="card-tip-header">
+          <i class="fas fa-faucet-drip"></i>
+          <h4>Planificación de Riego</h4>
+        </div>
+        <p>{{ datosClima().consejoRiego }}</p>
+      </div>
+
+      <div class="card-tip-box border-sol">
+        <div class="card-tip-header">
+          <i class="fas fa-shield-halved"></i>
+          <h4>Cuidado Lumínico y Solar</h4>
+        </div>
+        <p>{{ datosClima().consejoSol }}</p>
+      </div>
+
+      <div class="card-tip-box border-bio">
+        <div class="card-tip-header">
+          <i class="fas fa-bug-slash"></i>
+          <h4>Estado del Sustrato y Plagas</h4>
+        </div>
+        <p>{{ datosClima().consejoSustrato }}</p>
+      </div>
+    </div>
+  }
+</main>

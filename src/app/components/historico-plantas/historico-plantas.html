@@ -1,1 +1,168 @@
-<p>historico-plantas works!</p>
+<div class="bitacora-container">
+  
+  <header class="bitacora-header">
+    <div class="header-text">
+      <h2>Bitácora de Cultivo</h2>
+      <p>Registra y consulta el desarrollo de tus cultivos en tiempo real.</p>
+    </div>
+    
+    <div class="header-actions">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Buscar cultivo..." class="search-input">
+      </div>
+      <button class="btn-nueva-pub" (click)="abrirNuevoPost()">+ Nueva Publicación</button>
+    </div>
+  </header>
+
+  <!-- SECCIÓN CORREGIDA: Botones dinámicos que reaccionan al clic y cambian su clase active -->
+  <div class="filter-tabs">
+    <button class="tab-btn" [class.active]="filtroActual === 'Todos'" (click)="cambiarFiltro('Todos')">Todos</button>
+    <button class="tab-btn" [class.active]="filtroActual === 'Germinación'" (click)="cambiarFiltro('Germinación')">Germinación</button>
+    <button class="tab-btn" [class.active]="filtroActual === 'Crecimiento'" (click)="cambiarFiltro('Crecimiento')">Crecimiento</button>
+    <button class="tab-btn" [class.active]="filtroActual === 'Floración'" (click)="cambiarFiltro('Floración')">Floración</button>
+    <button class="tab-btn" [class.active]="filtroActual === 'Cosecha'" (click)="cambiarFiltro('Cosecha')">Cosecha</button>
+  </div>
+
+  <div class="bitacora-grid">
+    
+<section class="feed-section">
+  
+  <!-- 1. Si NO hay publicaciones -->
+  <div class="empty-state-card" *ngIf="publicaciones.length === 0">
+    <span class="empty-emoji">🌱</span>
+    <h3>Tu bitácora está vacía</h3>
+    <p>¡Escribe arriba en el botón verde los detalles de tu primer cultivo!</p>
+  </div>
+
+  <!-- 2. Si SÍ hay publicaciones -->
+  <div class="feed-grid" *ngIf="publicaciones.length > 0">
+    <div class="tarjeta-post" *ngFor="let post of publicaciones">
+      <div class="post-header">
+        <h3 class="post-title">{{ post.nombre }}</h3>
+        <span class="post-date">{{ post.fecha }}</span>
+      </div>
+      
+      <img [src]="post.imagen" alt="Foto de cultivo" class="post-img">
+      
+      <p class="post-desc">{{ post.descripcion }}</p>
+      
+      <div class="post-tags">
+        <span class="tag-item" *ngFor="let tag of post.tags">{{ tag }}</span>
+      </div>
+    </div>
+  </div>
+
+</section> <!-- 👈 ESTA LÍNEA DEBE SER EL CIERRE DE LA ETIQUETA SECTION QUE ABRIMOS ARRIBA -->
+
+<aside class="stats-sidebar">
+  <h3>Resumen del cultivo</h3>
+  
+  <div class="stat-card">
+    <!-- Aquí usamos la longitud de tu arreglo -->
+    <span class="stat-number">{{ publicaciones.length }}</span>
+    <span class="stat-label">Registros Totales</span>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-number">{{ publicaciones.length }}</span>
+    <span class="stat-label">Plantas Registradas</span>
+  </div>
+</aside>
+
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarFormulario">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Nueva Entrada de Cultivo</h3>
+      <button type="button" class="btn-close-modal" (click)="cerrarFormulario()">✕</button>
+    </div>
+
+    <form [formGroup]="bitacoraForm" (ngSubmit)="guardarRegistro()" class="modal-form">
+      
+      <div class="form-group">
+        <label for="nombre">Nombre del Cultivo *</label>
+        <input type="text" id="nombre" formControlName="nombre" placeholder="Ej. Tomate Cherry, Jitomate">
+      </div>
+
+      <div class="form-group">
+        <label for="etapa">Etapa Actual *</label>
+        <select id="etapa" formControlName="etapa">
+          <option value="Seleccione una etapa" disabled>Seleccione una etapa</option>
+          <option value="Germinación">1. Germinación</option>
+          <option value="Crecimiento">2. Crecimiento</option>
+          <option value="Floración">3. Floración</option>
+          <option value="Cosecha">4. Cosecha</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="descripcion">Descripción / Notas *</label>
+        <textarea id="descripcion" formControlName="descripcion" rows="4" placeholder="¿Cómo van tus plantas? Notas de riego, observaciones..."></textarea>
+      </div>
+<div class="form-group">
+        <label>Fotografía del Avance *</label>
+        <div class="image-upload-zone">
+          <!-- 1. Le agregamos el [disabled] al input oculto -->
+          <input 
+            type="file" 
+            id="fileInput" 
+            (change)="enArchivoSeleccionado($event)" 
+            accept="image/*" 
+            class="file-input-hidden"
+            [disabled]="analizandoImagen"
+          >
+          
+          <!-- 2. Le agregamos la clase dinámica al label para desactivar los clics -->
+          <label 
+            for="fileInput" 
+            class="upload-label-btn" 
+            *ngIf="!imagenSeleccionada"
+            [class.disabled-click]="analizandoImagen"
+          >
+            📸 Seleccionar Imagen de Captura
+          </label>
+
+          <div *ngIf="imagenSeleccionada" class="image-preview-container">
+            <img [src]="imagenSeleccionada" alt="Preview" class="preview-img-element">
+            <!-- También desactivamos el botón de quitar foto mientras se analiza -->
+            <button 
+              type="button" 
+              class="btn-delete-photo" 
+              (click)="quitarFoto()"
+              [disabled]="analizandoImagen"
+            >
+              ✕ Quitar foto
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Etiquetas de Acción</label>
+        <div class="modal-tags-grid">
+          <button type="button" 
+                  *ngFor="let etiqueta of listaEtiquetas; let i = index" 
+                  class="modal-tag-item" 
+                  [class.selected]="etiqueta.seleccionada"
+                  (click)="toggleEtiqueta(i)">
+            {{ etiqueta.emoji }} {{ etiqueta.nombre }}
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer-actions">
+        <button type="button" class="btn-modal-cancel" (click)="cancelar()">Cancelar</button>
+        
+        <button type="submit" 
+                class="btn-modal-save" 
+                [disabled]="bitacoraForm.invalid || !imagenSeleccionada || analizandoImagen || fotoBloqueada">
+          {{ analizandoImagen ? 'Analizando Imagen... ' : 'Guardar Registro' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

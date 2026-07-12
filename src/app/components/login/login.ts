@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router'; // 1. Importación necesaria
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../service/auth.service'; // Importa tu servicio
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -19,10 +19,12 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder, 
     private router: Router,
-    private auth: AuthService 
+    private auth: AuthService,
+    private route: ActivatedRoute // 2. Inyectado aquí
   ) {}
 
   ngOnInit(): void {
+    // Definición de formularios
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
@@ -33,6 +35,15 @@ export class LoginComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
       ubicacion: ['', [Validators.required]]
+    });
+
+    // 3. Lógica para detectar si venimos del botón "Crear cuenta"
+    this.route.queryParams.subscribe(params => {
+      if (params['modo'] === 'registro') {
+        this.isSignUpMode = true;
+      } else {
+        this.isSignUpMode = false;
+      }
     });
   }
 
@@ -53,7 +64,6 @@ export class LoginComponent implements OnInit {
           this.auth.iniciarSesion('UsuarioCliente');
         }
 
-        // Aquí está el cambio: redirigimos a la nueva ruta /admin/credenciales
         if (this.auth.esAdministrador()) {
           this.router.navigate(['/admin/credenciales']); 
         } else {

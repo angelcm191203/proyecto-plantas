@@ -1,1 +1,198 @@
-<p>mis-plantas works!</p>
+<main class="page">
+
+  <div class="page-header">
+    <div class="header-text">
+      <h2>🌿 Mis Plantas</h2>
+      <p>Seguimiento de cuidados y salud de tus cultivos virtuales</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-nueva-pub" (click)="abrirModal()">
+        <i class="fas fa-plus"></i> Registrar Planta
+      </button>
+    </div>
+  </div>
+
+  @if (mensaje(); as m) {
+    <div class="toast" [class.toast-ok]="m.tipo === 'ok'" [class.toast-error]="m.tipo === 'error'">
+      <i class="fas" [class.fa-circle-check]="m.tipo === 'ok'" [class.fa-circle-exclamation]="m.tipo === 'error'"></i>
+      <span>{{ m.texto }}</span>
+      <button class="toast-close" (click)="cerrarMensaje()"><i class="fas fa-xmark"></i></button>
+    </div>
+  }
+
+  <div class="calendar-nav-bar">
+    <h3><i class="fas fa-calendar-alt"></i> Calendario de cuidados — {{ nombreMes() }}</h3>
+    <div class="calendar-nav-buttons">
+      <button (click)="mesAnterior()"><i class="fas fa-chevron-left"></i></button>
+      <button (click)="mesSiguiente()"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <div class="clima-actual-card">
+    @if (climaActual(); as c) {
+      <div class="clima-actual-icono" [style.color]="c.color">
+        <i class="fas" [ngClass]="c.icono"></i>
+      </div>
+      <div class="clima-actual-info">
+        <span class="clima-actual-temp">{{ c.temperatura }}°C</span>
+        <span class="clima-actual-desc">{{ c.descripcion }} · sensación {{ c.sensacionTermica }}°C</span>
+        <span class="clima-actual-hora">Actualizado {{ c.hora }} hrs</span>
+      </div>
+    } @else if (cargandoClima()) {
+      <span class="clima-actual-cargando"><i class="fas fa-spinner fa-spin"></i> Consultando clima actual…</span>
+    } @else {
+      <span class="clima-actual-cargando">No se pudo obtener el clima actual.</span>
+    }
+    <button class="btn-refrescar-clima" (click)="actualizarClimaActual()" title="Actualizar clima">
+      <i class="fas fa-rotate"></i>
+    </button>
+  </div>
+
+  @if (plantas().length === 0) {
+    <div class="empty-state-card">
+      <span class="empty-emoji">🪴</span>
+      <h3>¡Tu jardín virtual está listo para sembrar!</h3>
+      <p>Aún no has registrado ninguna planta. Agrégala usando el botón superior para comenzar con el monitoreo dinámico y calendario.</p>
+    </div>
+  } @else {
+    <div class="plants-grid">
+      @for (planta of plantas(); track planta.id) {
+        <div class="plant-card">
+          <button class="btn-eliminar-planta" (click)="eliminarPlanta(planta.id)" title="Eliminar planta">
+            <i class="fa-regular fa-trash-can"></i>
+          </button>
+          
+          <div class="card-header">
+            <div class="plant-info">
+              <h2>{{ planta.nombre }}</h2>
+              <span>{{ planta.especie }} · {{ planta.ubicacion }}</span>
+            </div>
+            <div class="plant-emoji">
+              @if (planta.imagenUrl) {
+                <img [src]="planta.imagenUrl" [alt]="planta.nombre" class="plant-image">
+              } @else {
+                <span style="font-size: 2rem;">🌿</span>
+              }
+            </div>
+            <span class="status-badge" [class.status-good]="planta.estado === 'good'"
+                  [class.status-warn]="planta.estado === 'warn'" [class.status-alert]="planta.estado === 'alert'">
+              {{ planta.estadoTexto }}
+            </span>
+          </div>
+
+          <div class="card-stats">
+            <div class="stat-chip"><i class="fas fa-tint"></i><span class="val">{{ planta.riegoFrecuencia }}</span><span class="lbl">Riego</span></div>
+            <div class="stat-chip"><i class="fas fa-sun"></i><span class="val">{{ planta.solTipo }}</span><span class="lbl">Sol</span></div>
+            <div class="stat-chip"><i class="fas fa-thermometer-half"></i><span class="val">{{ planta.tempRango }}</span><span class="lbl">Temp.</span></div>
+          </div>
+
+          <div class="progress-section">
+            <div class="progress-item">
+              <div class="progress-label"><span><i class="fas fa-tint" style="color:#3FA8E0;margin-right:5px;"></i>Riego</span><span class="pct pct-water">{{ planta.progresoRiego }}%</span></div>
+              <div class="bar-track"><div class="bar-fill bar-water" [style.width.%]="planta.progresoRiego"></div></div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-label"><span><i class="fas fa-sun" style="color:#FDA769;margin-right:5px;"></i>Exposición solar</span><span class="pct pct-sun">{{ planta.progresoSol }}%</span></div>
+              <div class="bar-track"><div class="bar-fill bar-sun" [style.width.%]="planta.progresoSol"></div></div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-label"><span><i class="fas fa-heart" style="color:#52b788;margin-right:5px;"></i>Salud general</span><span class="pct pct-health">{{ planta.progresoSalud }}%</span></div>
+              <div class="bar-track"><div class="bar-fill bar-health" [style.width.%]="planta.progresoSalud"></div></div>
+            </div>
+          </div>
+
+          <div class="calendar-mini">
+            <div class="calendar-mini-dias">
+              @for (nombreDia of nombresDia; track nombreDia) {
+                <span class="calendar-mini-encabezado">{{ nombreDia }}</span>
+              }
+              @for (dia of diasDelMes(planta); track dia.claveFecha) {
+                @if (dia.fueraDeMes) {
+                  <div class="dia-celda dia-vacio"></div>
+                } @else {
+                  <div class="dia-celda" [class.dia-hoy]="dia.esHoy" [class.dia-futuro]="dia.esFuturo">
+                    <span class="dia-numero">{{ dia.numero }}</span>
+                    @if (dia.clima) {
+                      <i class="fas dia-clima" [ngClass]="dia.clima.icono" [style.color]="dia.clima.color"></i>
+                    }
+                    @if (dia.cuidadoHecho) {
+                      <i class="fas fa-check dia-check"></i>
+                    }
+                  </div>
+                }
+              }
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <span class="last-care"><i class="fas fa-history"></i>Último cuidado: {{ textoUltimoCuidado(planta) }}</span>
+            <label class="btn-foto">
+              <i class="fas fa-camera"></i> Foto
+              <input type="file" accept="image/*" hidden (change)="onFotoSeleccionada($event, planta)">
+            </label>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (modalAbierto()) {
+    <div class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Registrar Nueva Planta</h3>
+          <button class="btn-close-modal" (click)="cerrarModal()"><i class="fas fa-xmark"></i></button>
+        </div>
+        
+        <div class="modal-form">
+          <div class="form-group">
+            <label>Nombre de la planta</label>
+            <input type="text" placeholder="Ej. Cebolla Morada, Albahaca" #txtNombre>
+          </div>
+
+          <div class="form-group">
+            <label>Especie Científica</label>
+            <input type="text" placeholder="Ej. Allium cepa" #txtEspecie>
+          </div>
+
+          <div class="form-group">
+            <label>Ubicación</label>
+            <select #selUbicacion>
+              <option value="Huerto">Huerto</option>
+              <option value="Invernadero">Invernadero</option>
+              <option value="Maceta Interior">Maceta Interior</option>
+              <option value="Jardín Exterior">Jardín Exterior</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Frecuencia de Riego estimado</label>
+            <input type="text" placeholder="Ej. Cada 3d, Cada 2d" #txtRiego>
+          </div>
+
+          <div class="form-group">
+            <label>Imagen referencial (Opcional)</label>
+            <label class="upload-label-btn">
+              <i class="fas fa-image"></i> Cargar imagen desde el equipo
+              <input type="file" accept="image/*" class="file-input-hidden" (change)="onModalFotoSeleccionada($event)">
+            </label>
+            @if (modalImagenUrl()) {
+              <div class="image-preview-container">
+                <img [src]="modalImagenUrl()" class="preview-img-element" alt="Previsualización">
+                <button class="btn-delete-photo" (click)="eliminarFotoModal()">Quitar</button>
+              </div>
+            }
+          </div>
+
+          <div class="modal-footer-actions">
+            <button class="btn-modal-cancel" (click)="cerrarModal()">Cancelar</button>
+            <button class="btn-modal-save" (click)="guardarPlanta(txtNombre.value, txtEspecie.value, selUbicacion.value, txtRiego.value)">
+              Guardar Planta
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+</main>

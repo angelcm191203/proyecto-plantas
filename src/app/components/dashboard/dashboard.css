@@ -1,12 +1,13 @@
 /* Contenedor principal que divide la pantalla */
 .dashboard-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;      /* 🚨 FIJO: Fuerza a que el contenedor mida exactamente el alto de la pantalla */
+  overflow: hidden;   /* 🚨 CONGELADO: Evita que TODA la página web haga scroll y se mueva el menú */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f8f9fa;
 }
 
-/* Barra lateral izquierda */
+/* Barra lateral izquierda congelada */
 .sidebar {
   width: 260px;
   background-color: #ffffff;
@@ -14,6 +15,9 @@
   padding: 24px;
   display: flex;
   flex-direction: column;
+  height: 100vh;         /* Mantiene la barra midiendo el 100% de la ventana */
+  box-sizing: border-box; /* Evita desbordes por padding */
+  flex-shrink: 0;        /* Impide que el menú se aplaste en pantallas más compactas */
 }
 
 .brand-title {
@@ -56,9 +60,33 @@
   font-weight: 600;
 }
 
-/* Sección derecha de contenido dinámico */
+/* Contenedor que empuja el botón de cerrar sesión al fondo de la barra */
+.sidebar-footer {
+  margin-top: auto; /* 👈 Empuja automáticamente este bloque al final del menú fijo */
+  padding-top: 16px;
+  border-top: 1px solid #f1f3f5; /* Línea divisoria sutil */
+}
+
+/* Estilo unificado para el botón de cerrar sesión */
+.menu-btn.logout-btn {
+  width: 100%;
+  color: #dc3545; /* Color rojo elegante para denotar salida segura */
+  background: none;
+  font-weight: 600;
+}
+
+.menu-btn.logout-btn:hover {
+  background-color: #fff5f5; /* Fondo rojizo muy leve al pasar el mouse */
+  color: #a71d2a;
+}
+
+/* 📜 Sección derecha: ¡AQUÍ ES DONDE SÍ SE HACE SCROLL! */
 .main-content {
   flex: 1;
   padding: 40px;
   background-color: #f8f9fa;
+  
+  /* 🚨 ESTA CONFIGURACIÓN HACE LA MAGIA INTERNA 🚨 */
+  height: 100vh;      /* El contenedor derecho mide la altura exacta de la pantalla */
+  overflow-y: auto;   /* El catálogo o la bitácora harán su scroll aquí de forma independiente */
 }

@@ -1,0 +1,103 @@
+.clima-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+}
+
+.clima-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.header-text h2 { font-size: 26px; color: #1b4332; margin: 0; font-weight: 700; }
+.header-text p { color: #94a3b8; margin: 4px 0 0 0; font-size: 14px; }
+
+.btn-refresh {
+  background-color: #52b788; color: white; border: none; padding: 10px 20px;
+  border-radius: 10px; font-weight: 600; cursor: pointer; display: flex;
+  align-items: center; gap: 8px; transition: background 0.2s;
+}
+.btn-refresh:hover { background-color: #40916c; }
+
+.clima-panoramic-card {
+  width: 100%;
+  border-radius: 24px;
+  padding: 40px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  transition: background 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+  margin-bottom: 36px;
+}
+
+/* ==========================================================================
+   MATRIZ DE COMBINACIONES DE COLOR (API WEATHER & CLOCK)
+   ========================================================================== */
+
+/* CLOUDY / NUBADO */
+.sky-cloudy-dia { background: linear-gradient(180deg, #698ca7 0%, #b5c7d3 100%); }
+.sky-cloudy-atardecer { background: linear-gradient(180deg, #3a4856 0%, #7f7267 60%, #c48250 100%); }
+.sky-cloudy-noche { background: linear-gradient(180deg, #111a24 0%, #202d3a 100%); }
+
+/* THUNDER / TORMENTA */
+.sky-thunder-dia { background: linear-gradient(180deg, #374151 0%, #1f2937 100%); }
+.sky-thunder-atardecer { background: linear-gradient(180deg, #1f1c2c 0%, #4c304d 60%, #925852 100%); }
+.sky-thunder-noche { background: linear-gradient(180deg, #090d16 0%, #161f33 100%); }
+
+/* WINDY / VENTOSO */
+.sky-windy-dia { background: linear-gradient(180deg, #5a859e 0%, #a3c1ad 100%); }
+.sky-windy-noche { background: linear-gradient(180deg, #0f232e 0%, #1c3d4e 100%); }
+
+/* SUNNY / SOLEADO */
+.sky-sunny-amanecer { background: linear-gradient(180deg, #e65c00 0%, #f9d423 100%); }
+.sky-sunny-dia { background: linear-gradient(180deg, #3a9ad9 0%, #7ec0ee 50%, #bae1ff 100%); }
+.sky-sunny-atardecer { background: linear-gradient(180deg, #1a2a6c 0%, #b21f1f 55%, #fdbb2d 100%); }
+
+/* Elementos del paisaje interior */
+.scenery-zone { display: flex; justify-content: center; align-items: flex-end; min-height: 220px; }
+.cat-full-body { height: 230px; object-fit: contain; z-index: 2; filter: drop-shadow(0 12px 20px rgba(0,0,0,0.2)); }
+
+.weather-info-core { display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: center; z-index: 2; }
+.location-tag { background: rgba(255, 255, 255, 0.18); padding: 6px 16px; border-radius: 30px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px); margin-bottom: 12px; }
+.main-degrees { font-size: 5.5rem; font-weight: 700; margin: 0; }
+.condition-title { font-size: 1.8rem; font-weight: 500; margin: 6px 0 0 0; }
+.sub-weather-stats { font-size: 13.5px; margin-top: 10px; opacity: 0.85; display: flex; gap: 8px; }
+
+/* Rejilla de indicadores con diseño de icono lineal vectorial */
+.weather-glass-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; z-index: 2; }
+.glass-metric-item { background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 18px; display: flex; align-items: center; gap: 16px; }
+.glass-metric-item svg, .glass-metric-item i { font-size: 1.5rem; color: #ffffff; }
+.glass-metric-item div { display: flex; flex-direction: column; }
+.glass-metric-item .v { font-size: 16px; font-weight: 700; }
+.glass-metric-item .l { font-size: 11px; color: rgba(255, 255, 255, 0.75); font-weight: 500; }
+
+/* Recomendaciones inferiores distribuidas a lo largo */
+.recomendaciones-title h3 { font-size: 19px; color: #1b4332; margin: 30px 0 20px 0; font-weight: 600; }
+.recomendaciones-row { display: grid; grid-template-columns: 1fr; gap: 20px; }
+.card-tip-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.01); }
+.card-tip-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.card-tip-header i { font-size: 1.2rem; padding: 8px; border-radius: 10px; }
+.card-tip-header h4 { margin: 0; font-size: 15px; color: #2d3748; font-weight: 600; }
+
+.border-riego i { background: #eef2ff; color: #4f46e5; }
+.border-sol i { background: #fffbeb; color: #d97706; }
+.border-bio i { background: #f0fdf4; color: #16a34a; }
+.card-tip-box p { margin: 0; color: #4a5568; font-size: 13px; line-height: 1.6; }
+
+@media (min-width: 992px) {
+  .clima-panoramic-card { flex-direction: row; align-items: center; justify-content: space-between; padding: 40px 60px; }
+  .scenery-zone { flex: 0 0 240px; justify-content: flex-start; }
+  .cat-full-body { height: 260px; }
+  .weather-info-core { align-items: flex-start; text-align: left; flex: 1; padding-left: 50px; }
+  .main-degrees { font-size: 6.5rem; }
+  .weather-glass-metrics { grid-template-columns: repeat(2, 210px); gap: 16px; }
+  .recomendaciones-row { grid-template-columns: repeat(3, 1fr); }
+}
