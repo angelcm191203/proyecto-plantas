@@ -3,9 +3,8 @@
   <div class="clima-header">
     <div class="header-text">
       <h2>🌤️ Panel de Monitoreo Climático</h2>
-      <p>Información meteorológica en tiempo real vinculada a las necesidades de tu huerto</p>
     </div>
-    <button class="btn-refresh" (click)="cargarDatosClima()" [disabled]="cargando()">
+    <button class="btn-refresh" (click)="obtenerUbicacionYClima()" [disabled]="cargando()">
       <i class="fas fa-rotate" [class.fa-spin]="cargando()"></i> Actualizar API
     </button>
   </div>
@@ -13,60 +12,58 @@
   @if (cargando()) {
     <div class="loading-state">
       <i class="fas fa-spinner fa-spin"></i>
-      <p>Sincronizando matriz meteorológica...</p>
+      <p>Sincronizando ubicación y clima...</p>
     </div>
   } @else {
-    
     <div class="clima-panoramic-card" [ngClass]="obtenerEstiloAtmosferico()">
-      
-      <div class="scenery-zone">
-        <img [src]="datosClima().gatitoUrl" [alt]="datosClima().estado" class="cat-full-body">
-      </div>
+      <div class="layout-container">
+        <div class="info-izquierda">
+          <div class="location-tag">
+            <i class="fas fa-location-dot"></i> 
+            <span>{{ datosClima().ubicacion }}</span> 
+          </div>
+          <h1 class="main-degrees">{{ datosClima().temperatura }}°C</h1>
+          <h2 class="estado-text">{{ datosClima().estado }}</h2>
+          <p class="sensacion-text">Sensación: {{ datosClima().sensacion }}°C • {{ datosClima().maxMin }}</p>
+        </div>
 
-      <div class="weather-info-core">
-        <div class="location-tag">
-          <i class="fas fa-location-dot"></i> <span>{{ ubicacionActual() }}</span>
-        </div>
-        <h1 class="main-degrees">{{ datosClima().temperatura }}°C</h1>
-        <h2 class="condition-title">{{ datosClima().estado }}</h2>
-        <div class="sub-weather-stats">
-          <span>Sensación: {{ datosClima().sensacion }}°C</span>
-          <span>•</span>
-          <span>{{ datosClima().maxMin }}</span>
-        </div>
-      </div>
-
-      <div class="weather-glass-metrics">
-        <div class="glass-metric-item">
-          <i class="fas fa-wind"></i>
-          <div>
-            <span class="v">{{ datosClima().viento }} km/h</span>
-            <span class="l">Viento</span>
+        <div class="weather-glass-metrics">
+          <div class="glass-metric-item">
+            <i class="fas fa-wind"></i>
+            <div>
+              <span class="v">{{ datosClima().viento }} km/h</span>
+              <span class="l">Viento</span>
+            </div>
           </div>
-        </div>
-        <div class="glass-metric-item">
-          <i class="fas fa-cloud-rain"></i>
-          <div>
-            <span class="v">{{ datosClima().lluviaProb }}%</span>
-            <span class="l">Humedad / Prob.</span>
+          <div class="glass-metric-item">
+            <i class="fas fa-cloud-rain"></i>
+            <div>
+              <span class="v">{{ datosClima().lluviaProb }}%</span>
+              <span class="l">Humedad / Prob.</span>
+            </div>
           </div>
-        </div>
-        <div class="glass-metric-item">
-          <i class="fas fa-sun"></i>
-          <div>
-            <span class="v">{{ datosClima().uv }}</span>
-            <span class="l">Índice UV</span>
+          <div class="glass-metric-item">
+            <i class="fas fa-sun"></i>
+            <div>
+              <span class="v">{{ datosClima().uv }}</span>
+              <span class="l">Índice UV</span>
+            </div>
           </div>
-        </div>
-        <div class="glass-metric-item">
-          <i class="fas fa-eye"></i>
-          <div>
-            <span class="v">{{ datosClima().solPct }}%</span>
-            <span class="l">Visibilidad Sol</span>
+          <div class="glass-metric-item">
+            <i class="fas fa-eye"></i>
+            <div>
+              <span class="v">{{ datosClima().solPct }}%</span>
+              <span class="l">Visibilidad Sol</span>
+            </div>
           </div>
         </div>
       </div>
+    </div> 
 
+    <!-- Nueva sección del mapa integrada -->
+    <div class="mapa-container" style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 20px;">
+      <h3 style="margin-bottom: 15px; color: rgb(6, 6, 6);">📍 Ajustar ubicación de monitoreo</h3>
+      <app-mapa-clima (coordenadasSeleccionadas)="actualizarClima($event)"></app-mapa-clima>
     </div>
 
     <div class="recomendaciones-title">

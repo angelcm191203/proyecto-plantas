@@ -1,97 +1,25 @@
-/* You can add global styles to this file, and also import other style files */
-/* Copia esto en src/styles.css */
-.dashboard-layout {
-  display: flex;
-  min-height: 100vh;
+/* src/styles.css */
+@import "leaflet/dist/leaflet.css";
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  /* CAMBIO AQUÍ: Permitimos scroll global por defecto */
+  overflow: auto; 
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
 }
 
-.sidebar {
-  width: 260px;
-  background-color: #ffffff;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-}
-
-.brand-title {
-  font-size: 24px;
-  color: #2c3e50;
-  margin-bottom: 32px;
-  font-weight: 700;
-}
-
-.menu-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.menu-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: none;
-  border: none;
-  border-radius: 8px;
-  color: #7f8c8d;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.2s ease;
-}
-
-.menu-btn:hover {
-  background-color: #f1f3f5;
-  color: #333;
-}
-
-.menu-btn.active {
-  background-color: #e8f4fd;
-  color: #1a73e8;
-  font-weight: 600;
-}
-
-.main-content {
-  flex: 1;
-  padding: 40px;
-  background-color: #f8f9fa;
-}
-/* Estilo para el contenedor del contenido principal */
-.main-content {
-  background-color: #f8f9fa;
-  padding: 40px;
-}
-
-/* Estilo de tarjeta blanca para envolver tu gestión */
+/* El admin-card sigue igual */
 .admin-card {
   background: white;
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   margin-top: 20px;
-}
-
-/* Estilo para la tabla de credenciales */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-th {
-  text-align: left;
-  color: #2c3e50;
-  padding: 15px;
-  border-bottom: 2px solid #f1f3f5;
-}
-
-td {
-  padding: 15px;
-  border-bottom: 1px solid #f1f3f5;
-  color: #555;
 }

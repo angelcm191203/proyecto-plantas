@@ -1,13 +1,16 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { WeatherService } from '../../service/weather.service';
+import { MapaClimaComponent } from '../mapa-clima/mapa-clima';
 
 interface DatosClimaMaster {
+  ubicacion: string;
   temperatura: number;
   sensacion: number;
   maxMin: string;
   estado: string;
-  condicion: 'sunny' | 'cloudy' | 'rainy' | 'thunder' | 'windy' | 'snow';
-  horario: 'amanecer' | 'dia' | 'atardecer' | 'noche';
+  condicion: string;
+  horario: string;
   gatitoUrl: string;
   viento: number;
   lluviaProb: number;
@@ -21,100 +24,78 @@ interface DatosClimaMaster {
 @Component({
   selector: 'app-clima',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MapaClimaComponent],
   templateUrl: './clima.html',
   styleUrls: ['./clima.css']
 })
 export class ClimaComponent implements OnInit {
+  private weatherService = inject(WeatherService);
 
-  ubicacionActual = signal<string>('Paseos de San Juan');
+  ubicacionActual = signal<string>('Tepexpan');
   cargando = signal<boolean>(false);
-  
-  datosClima = signal<DatosClimaMaster>({
-    temperatura: 19,
-    sensacion: 19,
-    maxMin: '↑ 24° / ↓ 12°',
-    estado: 'Mayormente Nublado',
-    condicion: 'cloudy',
-    horario: 'dia',
-    gatitoUrl: 'https://images.vexels.com/media/users/3/242316/isolated/preview/4dfa34ee969c362b6620f4c084fa6b21-gato-negro-sentado-de-espaldas.png',
-    viento: 14,
-    lluviaProb: 44,
-    uv: 'Bajo (2)',
-    solPct: 15,
-    consejoRiego: 'La demanda hídrica es baja. El sustrato mantendrá la humedad estable.',
-    consejoSol: 'Luz difusa y protectora natural para las hojas más tiernas.',
-    consejoSustrato: 'Vigila que la tierra respire correctamente para evitar estancamientos.'
-  });
+  datosClima = signal<DatosClimaMaster>({} as DatosClimaMaster);
 
   ngOnInit(): void {
-    this.cargarDatosClima();
+    this.obtenerUbicacionYClima();
   }
 
-  // Simulación de los cambios que enviará tu API real
-  cargarDatosClima(): void {
+  actualizarClima(coordenadas: {lat: number, lng: number}): void {
+    const query = `${coordenadas.lat},${coordenadas.lng}`;
+    this.cargarDatosClima(query);
+  }
+
+  obtenerEstiloAtmosferico(): string {
+    const datos = this.datosClima();
+    return (datos && datos.condicion) ? `sky-${datos.condicion}-${datos.horario || 'dia'}` : 'sky-cloudy-dia';
+  }
+
+  obtenerUbicacionYClima(): void {
     this.cargando.set(true);
-    setTimeout(() => {
-      const piscinaClimas: DatosClimaMaster[] = [
-        {
-          temperatura: 19,
-          sensacion: 19,
-          maxMin: '↑ 24° / ↓ 12°',
-          estado: 'Mayormente Nublado',
-          condicion: 'cloudy',
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords = `${position.coords.latitude},${position.coords.longitude}`;
+          this.cargarDatosClima(coords);
+        },
+        () => this.cargarDatosClima('Tepexpan')
+      );
+    } else {
+      this.cargarDatosClima('Tepexpan');
+    }
+  }
+
+  cargarDatosClima(query: string): void {
+    this.cargando.set(true);
+    this.weatherService.getClima(query).subscribe({
+      next: (data: any) => {
+        const condicionTexto = data.current.condition.text.toLowerCase();
+        
+        let claseClima = 'cloudy';
+        if (condicionTexto.includes('sun') || condicionTexto.includes('clear')) claseClima = 'sunny';
+        else if (condicionTexto.includes('rain')) claseClima = 'rainy';
+        else if (condicionTexto.includes('thunder')) claseClima = 'thunder';
+
+        this.ubicacionActual.set(data.location.name);
+        this.datosClima.set({
+          ubicacion: data.location.name,
+          temperatura: data.current.temp_c,
+          sensacion: data.current.feelslike_c,
+          maxMin: `↑ ${data.forecast?.forecastday[0]?.day.maxtemp_c}° / ↓ ${data.forecast?.forecastday[0]?.day.mintemp_c}°`,
+          estado: data.current.condition.text,
+          condicion: claseClima,
           horario: 'dia',
           gatitoUrl: 'https://images.vexels.com/media/users/3/242316/isolated/preview/4dfa34ee969c362b6620f4c084fa6b21-gato-negro-sentado-de-espaldas.png',
-          viento: 14,
-          lluviaProb: 44,
-          uv: 'Moderado (3)',
-          solPct: 35,
-          consejoRiego: 'Evaporación moderada. Riega solo si el sustrato está seco a dos centímetros de profundidad.',
-          consejoSol: 'La nubosidad actúa como filtro natural. Ideal para plantas sensibles.',
-          consejoSustrato: 'Humedad ambiental estable. Buena oxigenación del suelo.'
-        },
-        {
-          temperatura: 18,
-          sensacion: 17,
-          maxMin: '↑ 24° / ↓ 13°',
-          estado: 'Tormenta Eléctrica',
-          condicion: 'thunder',
-          horario: 'atardecer',
-          gatitoUrl: 'https://images.vexels.com/media/users/3/235862/isolated/preview/e913a82df362f6d2da59f77e6fa56291-silueta-de-gato-asustado.png',
-          viento: 28,
-          lluviaProb: 95,
-          uv: 'Bajo (0)',
+          viento: data.current.wind_kph,
+          lluviaProb: data.current.humidity,
+          uv: data.current.uv.toString(),
           solPct: 0,
-          consejoRiego: 'Precipitaciones fuertes. Suspende cualquier tipo de riego manual inmediatamente.',
-          consejoSol: 'Cielo totalmente oscuro. La fotosíntesis se encuentra temporalmente en pausa.',
-          consejoSustrato: 'Riesgo alto de saturación. Asegúrate de drenar platos y contenedores exteriores.'
-        },
-        {
-          temperatura: 12,
-          sensacion: 10,
-          maxMin: '↑ 15° / ↓ 6°',
-          estado: 'Vientos Fuertes',
-          condicion: 'windy',
-          horario: 'noche',
-          gatitoUrl: 'https://images.vexels.com/media/users/3/242200/isolated/preview/fa91d09726df21a11584347209e5309d-gato-negro-caminando-de-lado.png',
-          viento: 45,
-          lluviaProb: 10,
-          uv: 'Nulo (0)',
-          solPct: 0,
-          consejoRiego: 'El viento reseca las hojas superficiales con rapidez. Revisa la humedad mañana temprano.',
-          consejoSol: 'Periodo de descanso nocturno bajo ráfagas continentales.',
-          consejoSustrato: 'Peligro de caída en macetas ligeras. Asegura o resguarda los ejemplares altos.'
-        }
-      ];
-
-      const ram = piscinaClimas[Math.floor(Math.random() * piscinaClimas.length)];
-      this.datosClima.set(ram);
-      this.cargando.set(false);
-    }, 700);
-  }
-
-  // Genera la clase combinada ej: 'sky-cloudy-dia', 'sky-thunder-atardecer'
-  obtenerEstiloAtmosferico(): string {
-    const c = this.datosClima();
-    return `sky-${c.condicion}-${c.horario}`;
+          consejoRiego: 'Riega al atardecer.',
+          consejoSol: 'Protege del sol directo.',
+          consejoSustrato: 'Revisa el drenaje.'
+        });
+        this.cargando.set(false);
+      },
+      error: () => this.cargando.set(false)
+    });
   }
 }

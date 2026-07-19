@@ -1,12 +1,8 @@
-.clima-container {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px;
-  font-family: 'Poppins', sans-serif;
-  box-sizing: border-box;
-}
 
+.clima-container {
+  /* No pongas height ni overflow aquí, deja que el main-content lo gestione */
+  display: block;
+}
 .clima-header {
   display: flex;
   justify-content: space-between;
@@ -23,19 +19,62 @@
 }
 .btn-refresh:hover { background-color: #40916c; }
 
+/* Estilos base */
 .clima-panoramic-card {
-  width: 100%;
-  border-radius: 24px;
-  padding: 40px;
-  color: white;
+  transition: background 0.6s ease;
+  padding: 2rem;
+  border-radius: 15px;
+}
+.layout-container {
   display: flex;
-  flex-direction: column;
-  gap: 32px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-  transition: background 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-  margin-bottom: 36px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+.info-izquierda {
+  flex: 1;
+  text-align: left;
+}
+
+.weather-glass-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Crea dos columnas para el 2x2 */
+  gap: 15px;
+  flex: 0 0 45%; /* La derecha ocupa casi la mitad */
+}
+
+.glass-metric-item {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 15px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.estado-text { margin: 5px 0; font-size: 1.8rem; }
+.sensacion-text { font-size: 1rem; opacity: 0.9; }
+
+.sky-sunny-dia { background: linear-gradient(135deg, #f7971e, #ffd200); }
+.sky-cloudy-dia { background: linear-gradient(135deg, #7474bf, #348ac7); }
+.sky-rainy-dia { background: linear-gradient(135deg, #4b6cb7, #182848); }
+.sky-thunder-dia { background: linear-gradient(135deg, #203a43, #2c5364); }
+/* Colores según condiciones */
+.sky-cloudy-dia {
+  background: linear-gradient(135deg, #7474bf, #348ac7); /* Azul nublado */
+}
+
+.sky-sunny-dia {
+  background: linear-gradient(135deg, #f7971e, #ffd200); /* Naranja soleado */
+}
+
+.sky-rainy-dia {
+  background: linear-gradient(135deg, #4b6cb7, #182848); /* Azul oscuro lluvioso */
+}
+
+.sky-thunder-dia {
+  background: linear-gradient(135deg, #203a43, #2c5364); /* Gris tormenta */
 }
 
 /* ==========================================================================

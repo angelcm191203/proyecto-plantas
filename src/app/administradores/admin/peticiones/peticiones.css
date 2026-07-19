@@ -1,36 +1,25 @@
-.admin-container {
-  padding: 2rem;
-  font-family: 'Segoe UI', sans-serif;
-  color: #191970; 
-}
-
-.minimal-table {
-  width: 100%;
-  border-collapse: collapse;
+.admin-card {
   background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
 }
 
-.minimal-table th, .minimal-table td {
-  padding: 1rem;
-  border-bottom: 1px solid #eee;
-  text-align: left;
-}
-
-.peticion-card {
-  border: 1px solid #eee;
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  background: white;
+.peticion-item {
+  margin-top: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 button {
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
+  border-radius: 6px;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  margin-right: 0.5rem;
+  font-weight: 500;
+  margin-right: 10px;
 }
 
-.btn-approve { background-color: #2e7d32; color: white; }
-.btn-delete, .btn-reject { background-color: #d32f2f; color: white; }
+.btn-aprobar { background-color: #22c55e; color: white; }
+.btn-rechazar { background-color: #ef4444; color: white; }
