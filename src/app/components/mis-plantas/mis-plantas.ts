@@ -1,12 +1,14 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ExifService } from './exif.service'; // 👈 Asegúrate de que la ruta sea correcta
+import { FormsModule } from '@angular/forms'; // 👈 Importado para soportar los formularios y selects
+import { ExifService } from './exif.service';
+import { WeatherService } from '../../service/weather.service';
 
-// Definición de las interfaces para un tipado estricto
 interface Planta {
   id: number;
   nombre: string;
-  especie: string;
+  especie: string; // Nombre común amigable (Ej. Cebolla, Papa)
+  etapaDesarrollo: string; // 👈 Añadido para registrar la etapa fenológica
   ubicacion: string;
   imagenUrl: string;
   estado: 'good' | 'warn' | 'alert';
@@ -17,7 +19,7 @@ interface Planta {
   progresoRiego: number;
   progresoSol: number;
   progresoSalud: number;
-  // Agregamos campos opcionales para guardar los metadatos de las fotos
+  ultimoRiego?: string;
   fechaCaptura?: Date;
   latitud?: number;
   longitud?: number;
@@ -35,23 +37,28 @@ interface Clima {
 @Component({
   selector: 'app-mis-plantas',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule], // 👈 Añadido FormsModule aquí
   templateUrl: './mis-plantas.html',
   styleUrls: ['./mis-plantas.css']
 })
-export class MisPlantasComponent {
+export class MisPlantasComponent implements OnInit {
   
-  // Inyectamos el servicio EXIF en el constructor
-  constructor(private exifService: ExifService) {}
+  private exifService = inject(ExifService);
+  private weatherService = inject(WeatherService);
 
-  // 1. Estructura básica para el mini-calendario de las tarjetas
-  nombresDia: string[] = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-  nombreMes = signal<string>('Julio 2026');
-  
-  // 2. Control de notificaciones (Toast)
+  temperaturaActual: number = 0;
+  alertaCalor: boolean = false;
+  alertaFrio: boolean = false;     // 👈 Declarado para evitar el error de TS
+  climaIdeal: boolean = false;     // 👈 Declarado para evitar el error de TS
+
+  ngOnInit(): void {
+    this.verificarClimaParaPlantas();
+  }
+
+  // Control de notificaciones (Toast)
   mensaje = signal<{ texto: string; tipo: 'ok' | 'error' } | null>(null);
   
-  // 3. Control de carga y visualización del Clima
+  // Control de carga y visualización del Clima
   cargandoClima = signal<boolean>(false);
   climaActual = signal<Clima | null>({
     temperatura: 15,
@@ -62,17 +69,83 @@ export class MisPlantasComponent {
     color: '#52b788'
   });
 
-  // 4. Signals para el Modal y metadatos temporales del modal
+  // Signals para el Modal y metadatos temporales
   modalAbierto = signal<boolean>(false);
   modalImagenUrl = signal<string>('');
   modalMetadatos = signal<{ fecha?: Date; latitud?: number; longitud?: number } | null>(null);
 
-  // 5. Arreglo reactivo inicial con tus cultivos dinámicos (Mock data)
+  // ================= CALENDARIO DE CUIDADOS =================
+  fechaActualCalendario = signal<Date>(new Date());
+  nombresDia = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+
+  nombreMes = computed(() => {
+    const meses = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    return `${meses[this.fechaActualCalendario().getMonth()]} ${this.fechaActualCalendario().getFullYear()}`;
+  });
+
+  mesAnterior(): void {
+    const fechaActual = this.fechaActualCalendario();
+    this.fechaActualCalendario.set(new Date(fechaActual.getFullYear(), fechaActual.getMonth() - 1, 1));
+  }
+
+  mesSiguiente(): void {
+    const fechaActual = this.fechaActualCalendario();
+    this.fechaActualCalendario.set(new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 1));
+  }
+
+diasDelMes(planta: Planta) {
+    const anio = this.fechaActualCalendario().getFullYear();
+    const mes = this.fechaActualCalendario().getMonth();
+    
+    const primerDiaIndex = new Date(anio, mes, 1).getDay();
+    const ultimoDia = new Date(anio, mes + 1, 0).getDate();
+    
+    const diasArray = [];
+    const hoyStr = new Date().toDateString();
+
+    for (let i = 0; i < primerDiaIndex; i++) {
+      diasArray.push({ fueraDeMes: true, claveFecha: `vacio-${i}` });
+    }
+
+    for (let dia = 1; dia <= ultimoDia; dia++) {
+      const fechaIterada = new Date(anio, mes, dia);
+      diasArray.push({
+        numero: dia,
+        fueraDeMes: false,
+        esHoy: fechaIterada.toDateString() === hoyStr,
+        esFuturo: fechaIterada > new Date(),
+        claveFecha: `${anio}-${mes}-${dia}`,
+        cuidadoHecho: dia === 5,
+        clima: null // 👈 Añadido para evitar el error de TypeScript
+      });
+    }
+
+    return diasArray;
+  }
+
+  textoUltimoCuidado(planta: Planta): string {
+    return planta.ultimoRiego || 'Sin registros aún';
+  }
+
+  // Catálogo rápido predefinido para evitar escribir nombres científicos complejos
+  catalogoCultivos = [
+    { nombre: 'Cebolla', riego: 'Cada 3d', sol: 'Pleno', temp: '18-24°C' },
+    { nombre: 'Papa', riego: 'Cada 2d', sol: 'Parcial', temp: '15-20°C' },
+    { nombre: 'Tomate / Jitomate', riego: 'Cada 2d', sol: 'Pleno', temp: '20-26°C' },
+    { nombre: 'Lechuga', riego: 'Cada 1-2d', sol: 'Parcial', temp: '14-18°C' },
+    { nombre: 'Chile / Pimiento', riego: 'Cada 3d', sol: 'Pleno', temp: '21-28°C' }
+  ];
+
+  // Arreglo reactivo inicial con tus cultivos
   plantas = signal<Planta[]>([
     {
       id: 1,
-      nombre: 'Cebolla',
-      especie: 'Allium cepa',
+      nombre: 'Cebolla del Patio',
+      especie: 'Cebolla',
+      etapaDesarrollo: 'Crecimiento / Desarrollo vegetativo',
       ubicacion: 'Huerto',
       imagenUrl: '', 
       estado: 'good',
@@ -82,12 +155,14 @@ export class MisPlantasComponent {
       tempRango: '18-24°C',
       progresoRiego: 85,
       progresoSol: 70,
-      progresoSalud: 82
+      progresoSalud: 82,
+      ultimoRiego: 'Hoy'
     },
     {
       id: 2,
-      nombre: 'Papa',
-      especie: 'Solanum tuberosum',
+      nombre: 'Papa de Maceta',
+      especie: 'Papa',
+      etapaDesarrollo: 'Floración / Maduración',
       ubicacion: 'Huerto',
       imagenUrl: '',
       estado: 'warn',
@@ -97,15 +172,43 @@ export class MisPlantasComponent {
       tempRango: '15-20°C',
       progresoRiego: 30,
       progresoSol: 90,
-      progresoSalud: 74
+      progresoSalud: 74,
+      ultimoRiego: 'Hace 3 días'
     }
   ]);
+
+  // ================= CONEXIÓN CON LA API DE CLIMA =================
+
+  verificarClimaParaPlantas(): void {
+    const ubicacionSeleccionada = localStorage.getItem('ubicacionClima') || 'Tepexpan';
+
+    this.weatherService.getClima(ubicacionSeleccionada).subscribe({
+      next: (data: any) => {
+        this.temperaturaActual = data.current.temp_c;
+        
+        // Evaluación completa de los estados de temperatura
+        this.alertaCalor = this.temperaturaActual > 30;
+        this.alertaFrio = this.temperaturaActual < 12;
+        this.climaIdeal = this.temperaturaActual >= 15 && this.temperaturaActual <= 26;
+
+        this.climaActual.set({
+          temperatura: data.current.temp_c,
+          descripcion: data.current.condition.text,
+          sensacionTermica: data.current.feelslike_c,
+          hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          icono: 'fa-sun',
+          color: '#FDA769'
+        });
+      },
+      error: (err) => console.error('Error al sincronizar el clima en Mis Plantas:', err)
+    });
+  }
 
   // ================= LÓGICA DE AGREGAR Y ELIMINAR =================
 
   abrirModal(): void {
     this.modalImagenUrl.set('');
-    this.modalMetadatos.set(null); // Limpiamos los metadatos anteriores
+    this.modalMetadatos.set(null);
     this.modalAbierto.set(true);
   }
 
@@ -113,30 +216,31 @@ export class MisPlantasComponent {
     this.modalAbierto.set(false);
   }
 
-  guardarPlanta(nombre: string, especie: string, ubicacion: string, riego: string): void {
-    if (!nombre.trim() || !especie.trim()) {
-      this.mensaje.set({ texto: 'Por favor, rellena el nombre y la especie obligatoriamente.', tipo: 'error' });
+  // Guardado ajustado para recibir la etapa de desarrollo en lugar del catálogo
+  guardarPlanta(nombrePersonalizado: string, etapaDesarrollo: string, ubicacion: string, riegoFrecuencia: string): void {
+    if (!nombrePersonalizado.trim()) {
+      this.mensaje.set({ texto: 'Por favor, asígnale un nombre a tu planta.', tipo: 'error' });
       return;
     }
 
-    // Recuperamos los metadatos extraídos de la foto del modal (si existen)
     const metadatosFoto = this.modalMetadatos();
 
     const nuevaPlanta: Planta = {
       id: Date.now(),
-      nombre: nombre,
-      especie: especie,
+      nombre: nombrePersonalizado,
+      especie: 'Cultivo Personalizado',
+      etapaDesarrollo: etapaDesarrollo || 'Crecimiento / Desarrollo vegetativo',
       ubicacion: ubicacion,
       imagenUrl: this.modalImagenUrl(),
       estado: 'good',
       estadoTexto: 'Saludable',
-      riegoFrecuencia: riego || 'Cada 3d',
+      riegoFrecuencia: riegoFrecuencia || 'Cada 3d',
       solTipo: 'Pleno',
       tempRango: '18-25°C',
       progresoRiego: 100,
       progresoSol: 100,
       progresoSalud: 100,
-      // Si la foto tenía metadatos, los sembramos en la nueva planta
+      ultimoRiego: 'Hoy',
       fechaCaptura: metadatosFoto?.fecha,
       latitud: metadatosFoto?.latitud,
       longitud: metadatosFoto?.longitud
@@ -144,7 +248,20 @@ export class MisPlantasComponent {
 
     this.plantas.update(lista => [...lista, nuevaPlanta]);
     this.cerrarModal();
-    this.mensaje.set({ texto: `¡${nombre} se ha registrado correctamente!`, tipo: 'ok' });
+    this.mensaje.set({ texto: `¡${nombrePersonalizado} registrada con éxito!`, tipo: 'ok' });
+  }
+
+  // Acción directa de riego rápido
+  registrarRiego(id: number): void {
+    this.plantas.update(lista =>
+      lista.map(p => {
+        if (p.id === id) {
+          return { ...p, progresoRiego: 100, estado: 'good', estadoTexto: 'Saludable', ultimoRiego: 'Hoy' };
+        }
+        return p;
+      })
+    );
+    this.mensaje.set({ texto: '¡Riego registrado! Progreso actualizado.', tipo: 'ok' });
   }
 
   eliminarPlanta(id: number): void {
@@ -154,18 +271,15 @@ export class MisPlantasComponent {
 
   // ================= MULTIMEDIA E INTERACCIONES =================
 
-  // Procesa la imagen cargada dentro del Modal extrayendo los datos EXIF
   async onModalFotoSeleccionada(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
 
-      // Previsualización de la imagen
       const reader = new FileReader();
       reader.onload = () => this.modalImagenUrl.set(reader.result as string);
       reader.readAsDataURL(file);
 
-      // Extracción de metadatos mediante tu servicio
       try {
         const metadatos = await this.exifService.leerMetadatos(file);
         this.modalMetadatos.set(metadatos);
@@ -182,8 +296,7 @@ export class MisPlantasComponent {
     this.modalMetadatos.set(null);
   }
 
-  // Procesa la imagen cargada desde la tarjeta actualizándole sus datos EXIF individuales
-async onFotoSeleccionada(event: Event, planta: Planta): Promise<void> {
+  async onFotoSeleccionada(event: Event, planta: Planta): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (!input || !input.files || input.files.length === 0) return;
 
@@ -216,7 +329,6 @@ async onFotoSeleccionada(event: Event, planta: Planta): Promise<void> {
         );
         this.mensaje.set({ texto: `Foto de ${planta.nombre} actualizada.`, tipo: 'ok' });
 
-        // 🔥 AQUÍ AGREGAMOS EL AVISO EN PANTALLA IGUAL AL DE ÁNGEL:
         const climaTemp = this.climaActual()?.temperatura || 15;
         const climaDesc = this.climaActual()?.descripcion || 'Fresco / nublado';
         
@@ -225,8 +337,7 @@ async onFotoSeleccionada(event: Event, planta: Planta): Promise<void> {
           horaFormateada = exifDetectado.fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
-        // Desplegamos el cuadro de texto flotante
-        alert(`De acuerdo a esta foto tomada a las ${horaFormateada} horas, el clima estuvo a ${climaTemp}°C (${climaDesc}) y tuvo una exposición solar aproximada muy alta (Índice UV 9).`);
+        alert(`De acuerdo a esta foto tomada a las ${horaFormateada} horas, el clima estuvo a ${climaTemp}°C (${climaDesc}) y tuvo una exposición solar aproximada.`);
 
       } catch (err) {
         console.error('Error crítico al actualizar el signal de plantas:', err);
@@ -236,38 +347,13 @@ async onFotoSeleccionada(event: Event, planta: Planta): Promise<void> {
     reader.readAsDataURL(file);
   }
 
-  // Simula la actualización en tiempo real de los datos del clima
   actualizarClimaActual(): void {
     this.cargandoClima.set(true);
     setTimeout(() => {
       this.cargandoClima.set(false);
-      this.climaActual.set({
-        temperatura: 17,
-        descripcion: 'Templado / Parcialmente Soleado',
-        sensacionTermica: 17,
-        hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        icono: 'fa-cloud-sun',
-        color: '#FDA769'
-      });
+      this.verificarClimaParaPlantas();
     }, 1000);
   }
 
   cerrarMensaje(): void { this.mensaje.set(null); }
-  mesAnterior(): void { console.log('Mes anterior'); }
-  mesSiguiente(): void { console.log('Mes siguiente'); }
-
-  diasDelMes(planta: Planta): any[] {
-    return Array.from({ length: 30 }, (_, i) => ({
-      numero: i + 1,
-      claveFecha: `dia-${i + 1}`,
-      fueraDeMes: false,
-      esHoy: i === 4,
-      esFuturo: i > 4,
-      cuidadoHecho: i < 4 && i % 2 === 0
-    }));
-  }
-
-  textoUltimoCuidado(planta: Planta): string {
-    return planta.id === 1 ? 'Hoy' : 'Sin registros aún';
-  }
 }

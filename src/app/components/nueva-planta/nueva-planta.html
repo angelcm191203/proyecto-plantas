@@ -1,86 +1,104 @@
 <div class="catalogo-container">
-  <h2>Catálogo de Plantas</h2>
-  <p>Selecciona una especie para iniciar su monitoreo.</p>
-
-  <!-- Botón de solicitud -->
-  <button class="btn-solicitar" (click)="abrirModal()">
-    + ¿No encuentras tu planta? Solicítala aquí
-  </button>
-
-  <!-- Formulario de solicitud (se muestra solo cuando mostrarFormulario es true) -->
-  <div *ngIf="mostrarFormulario" class="modal-solicitud">
-    <div class="modal-contenido">
-      <h3>Solicitar nueva planta</h3>
-      <form (submit)="enviarSolicitud($event)">
-        <label>Nombre de la planta:</label>
-        <input type="text" placeholder="Ej: Romero" required>
-        
-        <label>¿Por qué quieres agregarla?</label>
-        <textarea placeholder="Describe el por que te gustaria agregarla"></textarea>
-        
-        <div class="modal-acciones">
-          <button type="button" (click)="cerrarModal()" class="btn-cancelar">Cancelar</button>
-          <button type="submit" class="btn-enviar">Enviar solicitud</button>
-        </div>
-      </form>
+  
+  <div class="catalogo-header">
+    <div>
+      <h2>Catálogo de Plantas</h2>
+      <p>Selecciona una especie predefinida para iniciar su monitoreo en el huerto.</p>
     </div>
+    <!-- Botón de solicitud -->
+    <button class="btn-solicitar" (click)="abrirModal()">
+      <i class="fas fa-plus"></i> ¿No encuentras tu planta? Solicítala aquí
+    </button>
   </div>
 
+  <!-- Barra de búsqueda rápida -->
+  <div class="search-bar-container" style="margin: 20px 0; display: flex; align-items: center; background: #fff; padding: 10px 16px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+    <i class="fas fa-search" style="color: #94a3b8; margin-right: 10px;"></i>
+    <input type="text" placeholder="Buscar especie en el catálogo (Ej. Cebolla, Jitomate...)" #txtBuscar (keyup)="filtrarCatalogo(txtBuscar.value)" style="border: none; outline: none; width: 100%; font-size: 0.95rem; background: transparent;">
+  </div>
+
+  <!-- Formulario de solicitud (se muestra solo cuando mostrarFormulario es true) -->
+  @if (mostrarFormulario) {
+    <div class="modal-solicitud" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+      <div class="modal-contenido" style="background: white; padding: 24px; border-radius: 16px; width: 100%; max-width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+        <h3 style="margin-bottom: 15px; color: #1e293b;">Solicitar nueva planta</h3>
+        <form (submit)="enviarSolicitud($event)">
+          <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #475569;">Nombre de la planta:</label>
+            <input type="text" placeholder="Ej: Romero" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #475569;">¿Por qué quieres agregarla?</label>
+            <textarea placeholder="Describe el por qué te gustaría agregarla" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; height: 80px; resize: none;"></textarea>
+          </div>
+          
+          <div class="modal-acciones" style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" (click)="cerrarModal()" class="btn-cancelar" style="background: #f1f5f9; color: #475569; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;">Cancelar</button>
+            <button type="submit" class="btn-enviar" style="background: #22c55e; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;">Enviar solicitud</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Cuadrícula de tarjetas con datos climáticos estandarizados -->
   <div class="cards-grid">
     <div class="plant-card">
       <img src="planta8.jpg" alt="Cebolla" class="plant-img">
       <h3>Cebolla</h3>
-      <p>Clima: Cálido</p>
-      <button class="btn-agregar">Agregar planta</button>
+      <p><i class="fas fa-temperature-half"></i> Clima: Templado / Fresco (12-24°C)</p>
+      <button class="btn-agregar" (click)="agregarAlHuerto('Cebolla', $event)">Agregar planta</button>
     </div>
 
     <div class="plant-card">
       <img src="planta11.jpg" alt="Habanero" class="plant-img">
       <h3>Habanero</h3>
-      <p>Clima: Aquí el clima</p>
-      <button class="btn-agregar">Agregar planta</button>
+      <p><i class="fas fa-temperature-half"></i> Clima: Cálido / Tropical (20-32°C)</p>
+      <button class="btn-agregar" (click)="agregarAlHuerto('Habanero', $event)">Agregar planta</button>
     </div>
 
     <div class="plant-card">
       <img src="planta5.jpg" alt="Ajo" class="plant-img">
       <h3>Ajo</h3>
-      <p>Clima: Aquí el clima</p>
-      <button class="btn-agregar">Agregar planta</button>
+      <p><i class="fas fa-temperature-half"></i> Clima: Templado / Frío moderado</p>
+      <button class="btn-agregar" (click)="agregarAlHuerto('Ajo', $event)">Agregar planta</button>
     </div>
 
     <div class="plant-card">
       <img src="planta1.jpg" alt="Chile" class="plant-img">
       <h3>Chile</h3>
-      <p>Clima: Aquí el clima</p>
-      <button class="btn-agregar">Agregar planta</button>
+      <p><i class="fas fa-temperature-half"></i> Clima: Cálido y Soleado (18-30°C)</p>
+      <button class="btn-agregar" (click)="agregarAlHuerto('Chile', $event)">Agregar planta</button>
     </div>
 
     <div class="plant-card">
       <img src="planta4.jpg" alt="Coliflor" class="plant-img">
       <h3>Coliflor</h3>
-      <p>Clima: Aquí el clima</p>
-      <button class="btn-agregar">Agregar planta</button>
+      <p><i class="fas fa-temperature-half"></i> Clima: Templado / Fresco (15-20°C)</p>
+      <button class="btn-agregar" (click)="agregarAlHuerto('Coliflor', $event)">Agregar planta</button>
     </div>
 
     <div class="plant-card">
       <img src="planta10.jpg" alt="Elote" class="plant-img">
       <h3>Elote</h3>
-      <p>Clima: Aquí el clima</p>
-      <button class="btn-agregar">Agregar planta</button>
+      <p><i class="fas fa-temperature-half"></i> Clima: Cálido / Templado (21-27°C)</p>
+      <button class="btn-agregar" (click)="agregarAlHuerto('Elote', $event)">Agregar planta</button>
     </div>
 
     <div class="plant-card">
       <img src="planta6.jpg" alt="Jitomate" class="plant-img">
       <h3>Jitomate</h3>
-      <p>Clima: Aquí el clima</p>
-      <button class="btn-agregar">Agregar planta</button>
+      <p><i class="fas fa-temperature-half"></i> Clima: Templado-Cálido (20-26°C)</p>
+      <button class="btn-agregar" (click)="agregarAlHuerto('Jitomate', $event)">Agregar planta</button>
     </div>
 
     <div class="plant-card">
       <img src="planta9.jpg" alt="Fresa" class="plant-img">
       <h3>Fresa</h3>
-      <p>Clima: Aquí el clima</p>
-      <button class="btn-agregar">Agregar planta</button>
+      <p><i class="fas fa-temperature-half"></i> Clima: Templado / Moderado (15-22°C)</p>
+      <button class="btn-agregar" (click)="agregarAlHuerto('Fresa', $event)">Agregar planta</button>
     </div>
   </div>
+
 </div>

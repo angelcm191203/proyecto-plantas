@@ -19,6 +19,7 @@ interface DatosClimaMaster {
   consejoRiego: string;
   consejoSol: string;
   consejoSustrato: string;
+  pronosticoDias: any[];
 }
 
 @Component({
@@ -36,7 +37,14 @@ export class ClimaComponent implements OnInit {
   datosClima = signal<DatosClimaMaster>({} as DatosClimaMaster);
 
   ngOnInit(): void {
-    this.obtenerUbicacionYClima();
+    // 💡 Verificamos si ya hay una ubicación guardada previamente antes de recurrir al valor por defecto
+    const ultimaUbicacionGuardada = localStorage.getItem('ubicacionClima');
+
+    if (ultimaUbicacionGuardada) {
+      this.cargarDatosClima(ultimaUbicacionGuardada);
+    } else {
+      this.obtenerUbicacionYClima();
+    }
   }
 
   actualizarClima(coordenadas: {lat: number, lng: number}): void {
@@ -66,7 +74,11 @@ export class ClimaComponent implements OnInit {
 
   cargarDatosClima(query: string): void {
     this.cargando.set(true);
-    this.weatherService.getClima(query).subscribe({
+
+    // Guardamos la coordenada o ubicación actual en el localStorage para sincronizarla con "Mis Plantas"
+    localStorage.setItem('ubicacionClima', query);
+
+    this.weatherService.getPronostico(query, 5).subscribe({
       next: (data: any) => {
         const condicionTexto = data.current.condition.text.toLowerCase();
         
@@ -75,12 +87,14 @@ export class ClimaComponent implements OnInit {
         else if (condicionTexto.includes('rain')) claseClima = 'rainy';
         else if (condicionTexto.includes('thunder')) claseClima = 'thunder';
 
+        const hoyForecast = data.forecast?.forecastday[0]?.day;
+
         this.ubicacionActual.set(data.location.name);
         this.datosClima.set({
           ubicacion: data.location.name,
           temperatura: data.current.temp_c,
           sensacion: data.current.feelslike_c,
-          maxMin: `↑ ${data.forecast?.forecastday[0]?.day.maxtemp_c}° / ↓ ${data.forecast?.forecastday[0]?.day.mintemp_c}°`,
+          maxMin: hoyForecast ? `↑ ${hoyForecast.maxtemp_c}° / ↓ ${hoyForecast.mintemp_c}°` : 'N/D',
           estado: data.current.condition.text,
           condicion: claseClima,
           horario: 'dia',
@@ -91,7 +105,8 @@ export class ClimaComponent implements OnInit {
           solPct: 0,
           consejoRiego: 'Riega al atardecer.',
           consejoSol: 'Protege del sol directo.',
-          consejoSustrato: 'Revisa el drenaje.'
+          consejoSustrato: 'Revisa el drenaje.',
+          pronosticoDias: data.forecast?.forecastday || []
         });
         this.cargando.set(false);
       },

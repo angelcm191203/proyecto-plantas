@@ -6,15 +6,20 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class WeatherService {
-  // Asegúrate de que no haya espacios antes o después de la llave
   private apiKey = '9312479d7e304de1834210550261307';
   private baseUrl = 'https://api.weatherapi.com/v1/current.json';
+  private forecastUrl = 'https://api.weatherapi.com/v1/forecast.json'; // <--- Nuevo endpoint para pronóstico
 
   constructor(private http: HttpClient) { }
 
   getClima(ciudad: string): Observable<any> {
-    // Es muy importante que la URL sea exactamente esta
     const url = `${this.baseUrl}?key=${this.apiKey}&q=${ciudad}&aqi=no`;
+    return this.http.get(url);
+  }
+
+  // <--- Nuevo método para obtener los días futuros (ej. 5 días)
+getPronostico(ciudad: string, dias: number = 5): Observable<any> {
+    const url = `${this.forecastUrl}?key=${this.apiKey}&q=${ciudad}&days=${dias}&aqi=no&alerts=no&lang=es`; // <--- Agregado &lang=es
     return this.http.get(url);
   }
 }

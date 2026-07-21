@@ -2,6 +2,7 @@
   <div class="forms-container">
     <div class="signin-signup">
       
+      <!-- Formulario de Iniciar Sesión -->
       <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" class="sign-in-form">
         <h2 class="title">Iniciar Sesión</h2>
         
@@ -17,13 +18,20 @@
         <button type="submit" class="btn solid">Iniciar Sesión</button>
       </form>
 
+      <!-- Formulario de Registro -->
       <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="sign-up-form">
         <h2 class="title">Registrarse</h2>
-        <div class="social-media">
-          <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+        
+        <!-- SELECTOR DE AVATARES INTERACTIVO -->
+        <div class="avatar-selector">
+          <button 
+            type="button" 
+            class="avatar-option" 
+            *ngFor="let avatar of avataresDisponibles"
+            [class.selected]="avatarSeleccionado === avatar"
+            (click)="seleccionarAvatar(avatar)">
+            {{ avatar }}
+          </button>
         </div>
         
         <div class="input-field">

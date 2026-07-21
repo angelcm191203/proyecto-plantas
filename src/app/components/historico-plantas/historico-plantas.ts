@@ -19,7 +19,7 @@ export class HistoricoPlantas {
   analizandoImagen = false;
   fotoBloqueada = false;
 
-  // Nueva propiedad para controlar el filtro activo
+  // Propiedad para controlar el filtro activo
   filtroActual = 'Todos';
 
   palabrasProhibidas: string[] = ['puto', 'pendejo', 'mierda', 'verga', 'pene', 'puta', 'culero', 'cabron', 'chinga'];
@@ -40,8 +40,13 @@ export class HistoricoPlantas {
 
   publicaciones: any[] = [];
 
-  // CORREGIDO: Constructor con comas y tipos correctos inyectados
-
+  // Getter para filtrar las publicaciones en tiempo real según el botón seleccionado
+  get publicacionesFiltradas() {
+    if (this.filtroActual === 'Todos') {
+      return this.publicaciones;
+    }
+    return this.publicaciones.filter(pub => pub.etapa === this.filtroActual);
+  }
 
   abrirNuevoPost() {
     this.isEditing = false;
@@ -65,13 +70,11 @@ export class HistoricoPlantas {
     this.listaEtiquetas[index].seleccionada = !this.listaEtiquetas[index].seleccionada;
   }
 
-  // Nueva función para cambiar el filtro activo
   cambiarFiltro(etapa: string) {
     this.filtroActual = etapa;
     console.log('Filtrando por:', this.filtroActual);
   }
 
-  // CORREGIDO: Función optimizada, asíncrona y con refresco forzado de Angular
   enArchivoSeleccionado(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -85,7 +88,7 @@ export class HistoricoPlantas {
 
       this.analizandoImagen = true;
       this.fotoBloqueada = false;
-      this.cdr.detectChanges(); // Forzamos a Angular a prender el botón "Analizando..."
+      this.cdr.detectChanges(); 
 
       const imgReader = new FileReader();
       imgReader.onload = (e: any) => {
@@ -123,7 +126,6 @@ export class HistoricoPlantas {
                   const partial = res.nudity?.partial || 0;
                   const gore = res.gore?.prob || 0;
 
-                  // Filtro al 80% para evitar falsos positivos con fotos de cultivos
                   if (raw > 0.80 || partial > 0.80 || gore > 0.70) {
                     alert('🚨 Fotografía bloqueada por la inteligencia artificial: Contenido explícito detectado.');
                     this.quitarFoto();
@@ -135,7 +137,7 @@ export class HistoricoPlantas {
                   }
                 }
                 
-                this.cdr.detectChanges(); // Forzamos a Angular a apagar el botón verde
+                this.cdr.detectChanges(); 
               },
               error: (err) => {
                 this.analizandoImagen = false;
@@ -164,7 +166,6 @@ export class HistoricoPlantas {
     this.cdr.detectChanges();
   }
 
-// 1. Modifica tu constructor para que lea lo que ya tenías guardado al iniciar la página
   constructor(
     private http: HttpClient, 
     private cdr: ChangeDetectorRef
@@ -175,14 +176,12 @@ export class HistoricoPlantas {
       descripcion: new FormControl('', Validators.required)
     });
 
-    // Jalamos las publicaciones que ya existían en la compu para que no se borren
     const guardadas = localStorage.getItem('publicaciones_bitacora');
     if (guardadas) {
       this.publicaciones = JSON.parse(guardadas);
     }
   }
 
-  // 2. Modifica la parte final de tu función guardarRegistro
   guardarRegistro() {
     if (this.analizandoImagen) {
       alert('Espera un segundo, la inteligencia artificial está analizando tu imagen... 🛡️');
@@ -220,16 +219,13 @@ export class HistoricoPlantas {
         tags: tagsSeleccionados
       };
 
-      // Metemos la publicación al inicio del arreglo
       this.publicaciones.unshift(nuevaPublicacion);
-      
-      // 🔥 LA MAGIA: Guardamos el arreglo completo en la memoria del navegador
       localStorage.setItem('publicaciones_bitacora', JSON.stringify(this.publicaciones));
 
       console.log('¡Publicación guardada con éxito en LocalStorage! 📦', nuevaPublicacion);
       
       this.cerrarFormulario();
-      this.cdr.detectChanges(); // Forzamos a Angular a pintar la nueva tarjeta
+      this.cdr.detectChanges(); 
     } else {
       alert('Por favor, llena todos los campos obligatorios y sube una fotografía.');
     }

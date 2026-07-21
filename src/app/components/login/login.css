@@ -572,3 +572,38 @@ form.sign-in-form {
   background-color: #F5F7EE;
   transform: scale(1.08);
 }
+/* --- ESTILOS PARA EL SELECTOR DE AVATARES --- */
+.avatar-selector {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.avatar-option {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(171, 194, 112, 0.4);
+  background-color: #F5F2EB;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+.avatar-option:hover {
+  border-color: #ABC270;
+  transform: scale(1.08);
+  background-color: #F5F7EE;
+}
+
+.avatar-option.selected {
+  border-color: #ABC270;
+  background-color: #ABC270;
+  box-shadow: 0 6px 15px rgba(171, 194, 112, 0.4);
+  transform: scale(1.1);
+}

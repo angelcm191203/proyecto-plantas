@@ -66,33 +66,35 @@
       <app-mapa-clima (coordenadasSeleccionadas)="actualizarClima($event)"></app-mapa-clima>
     </div>
 
-    <div class="recomendaciones-title">
-      <h3>🐾 Recomendaciones del Gatito Meteorólogo</h3>
-    </div>
-
-    <div class="recomendaciones-row">
-      <div class="card-tip-box border-riego">
-        <div class="card-tip-header">
-          <i class="fas fa-faucet-drip"></i>
-          <h4>Planificación de Riego</h4>
-        </div>
-        <p>{{ datosClima().consejoRiego }}</p>
+    <!-- NUEVO: Pronóstico de los próximos 5 días con datos reales de la API -->
+    <div class="forecast-container" style="margin-top: 30px;">
+      <div class="recomendaciones-title">
+        <h3 style="margin-bottom: 15px; color: rgb(6, 6, 6);">📅 Pronóstico para los próximos 5 días</h3>
       </div>
-
-      <div class="card-tip-box border-sol">
-        <div class="card-tip-header">
-          <i class="fas fa-shield-halved"></i>
-          <h4>Cuidado Lumínico y Solar</h4>
+      
+      <div class="forecast-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px;">
+        <div class="forecast-card" *ngFor="let dia of datosClima().pronosticoDias" style="background: rgba(255, 255, 255, 0.85); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+          
+          <!-- Día de la semana -->
+           <span class="forecast-date" style="font-weight: bold; color: #1e293b; display: block; margin-bottom: 5px;">
+        {{ dia.date | date:'EEE':'':'es-MX' }}
+           </span>
+  
+          
+          <!-- Icono del clima oficial de la API -->
+          <img [src]="'https:' + dia.day.condition.icon" [alt]="dia.day.condition.text" class="forecast-icon" style="width: 45px; height: 45px; margin: 5px auto;">
+          
+          <!-- Temperaturas Máx / Mín -->
+          <div class="forecast-temps" style="display: flex; justify-content: center; gap: 8px; margin: 5px 0;">
+            <strong style="color: #0f172a;">{{ dia.day.maxtemp_c }}°</strong>
+            <span style="color: #64748b;">{{ dia.day.mintemp_c }}°</span>
+          </div>
+          
+          <!-- Descripción breve -->
+          <small class="forecast-text" style="color: #475569; font-size: 0.75rem; display: block; line-height: 1.2;">
+            {{ dia.day.condition.text }}
+          </small>
         </div>
-        <p>{{ datosClima().consejoSol }}</p>
-      </div>
-
-      <div class="card-tip-box border-bio">
-        <div class="card-tip-header">
-          <i class="fas fa-bug-slash"></i>
-          <h4>Estado del Sustrato y Plagas</h4>
-        </div>
-        <p>{{ datosClima().consejoSustrato }}</p>
       </div>
     </div>
   }
