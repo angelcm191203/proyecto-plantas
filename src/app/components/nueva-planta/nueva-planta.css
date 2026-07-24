@@ -1,157 +1,227 @@
-.catalogo-container { padding: 20px; }
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 25px;
-  margin-top: 20px;
+/* ==========================================================================
+   LAYOUT PRINCIPAL (Ajustado a la Bitácora)
+   ========================================================================== */
+.catalogo-container {
+  padding: 28px 36px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #2b3a42;
+  background-color: #f8faf9;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-.plant-card {
-  background: white;
-  padding: 16px;
-  border-radius: 15px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-  text-align: center;
-  transition: transform 0.3s ease;
-  border: 1px solid #edf2f7;
+/* ==========================================================================
+   HEADER SECTION
+   ========================================================================== */
+.catalogo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
 }
 
-.plant-card:hover { transform: translateY(-8px); }
+.catalogo-header h2 {
+  font-size: 32px;
+  color: #1b4332;
+  margin: 0 0 6px 0;
+  font-weight: 700;
+}
 
-/* Espacio para la imagen */
-.image-placeholder {
-  width: 100%;
-  height: 140px;
-  background-color: #e2e8f0; /* Color gris suave para el contenedor vacío */
+.catalogo-header p {
+  color: #8395a7;
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Botón "¿No encuentras tu planta? Solicítala aquí" */
+.btn-solicitar {
+  background-color: #4eaa80; 
+  color: #ffffff;
+  border: none;
+  padding: 12px 22px;
   border-radius: 10px;
-  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-}
-
-.plant-card h3 {
-  margin: 10px 0 5px;
-  color: #2d3748;
-}
-
-.plant-card p {
-  font-size: 0.9em;
-  color: #718096;
-  margin-bottom: 15px;
-}
-
-.btn-agregar {
-  width: 100%;
-  padding: 10px;
-  background-color: #5ab981; /* Verde corporativo */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-/* Asegúrate de que este estilo esté aplicado a tu etiqueta <img> */
-.plant-img {
-  width: 100%;       /* Ocupa todo el ancho de la tarjeta */
-  height: 150px;     /* Altura fija para que todas las cards sean iguales */
-  object-fit: cover; /* Centra la imagen y recorta los bordes sobrantes sin deformar */
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  display: block;
-}
-
-/* Ajuste para el título vacío */
-.plant-card h3 {
-  min-height: 1.2em; /* Mantiene el espacio aunque esté vacío */
-  margin: 10px 0 5px;
-  color: #2d3748;
-}
-.btn-solicitar {
-  background-color: #48bb78; /* El mismo tono verde que tus botones de tarjeta */
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 25px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  font-size: 0.95rem;
-  /* Alineamos el estilo de sombra con el de tus tarjetas para consistencia */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
-  display: inline-flex;
-  align-items: center;
+  gap: 8px;
+  transition: background 0.2s ease, transform 0.1s ease;
+  box-shadow: none; /* Sin sombras pesadas */
 }
 
 .btn-solicitar:hover {
-  background-color: #38a169; /* Un tono un poco más oscuro para el hover */
-  transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  background-color: #3d926b; /* Mismo hover suave de Bitácora */
+  transform: none;
 }
-/* Contenedor del modal (fondo oscuro semi-transparente) */
+/* ==========================================================================
+   BARRA DE BÚSQUEDA
+   ========================================================================== */
+.search-bar-container {
+  margin: 20px 0 28px 0 !important;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 12px 18px !important;
+  border-radius: 12px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+  max-width: 100%;
+}
+
+.search-bar-container i {
+  color: #a0aec0 !important;
+  font-size: 16px;
+  margin-right: 12px !important;
+}
+
+.search-bar-container input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 15px !important;
+  background: transparent;
+  color: #2d3748;
+}
+
+.search-bar-container input::placeholder {
+  color: #a0aec0;
+}
+
+/* ==========================================================================
+   GRID DE TARJETAS (4 Columnas responsivas)
+   ========================================================================== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 22px;
+}
+
+/* Tarjeta individual */
+.plant-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid #edf2f7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.plant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Imagen de la planta */
+.plant-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+
+/* Título de la tarjeta */
+.plant-card h3 {
+  font-size: 18px;
+  color: #1b4332;
+  margin: 0 0 6px 0;
+  font-weight: 700;
+}
+
+/* Texto del Clima */
+.plant-card p {
+  font-size: 13.5px;
+  color: #8395a7;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.plant-card p i {
+  color: #e53e3e; /* Icono termómetro rosado/rojo */
+}
+
+/* Botón "Agregar planta" */
+.btn-agregar {
+  margin-top: auto;
+  width: 100%;
+  background-color: #52b788;
+  color: #ffffff;
+  border: none;
+  padding: 11px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-agregar:hover {
+  background-color: #40916c;
+}
+
+/* ==========================================================================
+   MODAL DE SOLICITUD (Mismos tonos de Bitácora)
+   ========================================================================== */
 .modal-solicitud {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+  top: 0; 
+  left: 0; 
+  width: 100%; 
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
 }
 
-/* Caja blanca del formulario */
 .modal-contenido {
   background: white;
-  padding: 30px;
-  border-radius: 12px;
+  padding: 28px;
+  border-radius: 16px;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 480px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilos de los campos del formulario */
-.modal-contenido h3 { margin-top: 0; color: #2d3748; }
-
-.modal-contenido label { display: block; margin: 15px 0 5px; font-weight: 600; color: #4a5568; }
-
-.modal-contenido input, 
-.modal-contenido textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  box-sizing: border-box; /* Importante para que el padding no rompa el ancho */
-}
-
-/* Botones dentro del modal */
-.modal-acciones {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.btn-cancelar {
-  background: #edf2f7;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 6px;
-  cursor: pointer;
+.modal-contenido h3 {
+  margin: 0 0 18px 0;
+  color: #1b4332;
+  font-size: 22px;
+  font-weight: 700;
 }
 
 .btn-enviar {
-  background: #48bb78; /* Mismo verde de tu programa */
+  background: #52b788 !important;
   color: white;
   border: none;
-  padding: 10px 15px;
-  border-radius: 6px;
+  padding: 10px 20px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
+  font-size: 15px;
+  transition: background 0.2s;
+}
+
+.btn-enviar:hover {
+  background: #40916c !important;
+}
+
+.btn-cancelar {
+  background: #edf2f7 !important;
+  color: #4a5568 !important;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.btn-cancelar:hover {
+  background: #e2e8f0 !important;
 }

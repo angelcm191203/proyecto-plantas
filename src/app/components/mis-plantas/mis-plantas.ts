@@ -1,12 +1,11 @@
 import { Component, signal, OnInit, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { ExifService } from './exif.service';
 import { WeatherService } from '../../service/weather.service';
 
 interface Planta {
-  id: number;
+  id: number | string;
   nombre: string;
   especie: string;
   etapaDesarrollo: string;
@@ -20,6 +19,8 @@ interface Planta {
   progresoRiego: number;
   progresoSol: number;
   progresoSalud: number;
+  puntuacionGeneral?: number;
+  fechaRegistro?: string;
   ultimoRiego?: string;
   fechaCaptura?: Date;
   latitud?: number;
@@ -43,25 +44,39 @@ interface Clima {
   styleUrls: ['./mis-plantas.css']
 })
 export class MisPlantasComponent implements OnInit {
-  
+
   private exifService = inject(ExifService);
   private weatherService = inject(WeatherService);
-  private http = inject(HttpClient);
 
   temperaturaActual: number = 0;
   alertaCalor: boolean = false;
   alertaFrio: boolean = false;
   climaIdeal: boolean = false;
 
-  ngOnInit(): void {
-    this.verificarClimaParaPlantas();
-    this.cargarPlantasDesdeBD();
-  }
+  private plantasPorDefecto: Planta[] = [
+    {
+      id: '1',
+      nombre: 'Cebolla del Patio',
+      especie: 'Cebolla',
+      etapaDesarrollo: 'Crecimiento / Desarrollo vegetativo',
+      ubicacion: 'Huerto',
+      imagenUrl: '', 
+      estado: 'good',
+      estadoTexto: 'Saludable',
+      riegoFrecuencia: 'Cada 3d',
+      solTipo: 'Pleno',
+      tempRango: '18-24°C',
+      progresoRiego: 85,
+      progresoSol: 70,
+      progresoSalud: 82,
+      puntuacionGeneral: 5,
+      fechaRegistro: new Date().toLocaleDateString('es-MX'),
+      ultimoRiego: 'Hoy'
+    }
+  ];
 
-  // Control de notificaciones (Toast)
+  plantas = signal<Planta[]>([]);
   mensaje = signal<{ texto: string; tipo: 'ok' | 'error' } | null>(null);
-  
-  // Control de carga y visualización del Clima
   cargandoClima = signal<boolean>(false);
   climaActual = signal<Clima | null>({
     temperatura: 15,
@@ -72,12 +87,10 @@ export class MisPlantasComponent implements OnInit {
     color: '#52b788'
   });
 
-  // Signals para el Modal y metadatos temporales
   modalAbierto = signal<boolean>(false);
   modalImagenUrl = signal<string>('');
   modalMetadatos = signal<{ fecha?: Date; latitud?: number; longitud?: number } | null>(null);
 
-  // ================= CALENDARIO DE CUIDADOS =================
   fechaActualCalendario = signal<Date>(new Date());
   nombresDia = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
 
@@ -88,6 +101,33 @@ export class MisPlantasComponent implements OnInit {
     ];
     return `${meses[this.fechaActualCalendario().getMonth()]} ${this.fechaActualCalendario().getFullYear()}`;
   });
+
+  catalogoCultivos = [
+    { nombre: 'Cebolla', riego: 'Cada 3d', sol: 'Pleno', temp: '18-24°C' },
+    { nombre: 'Papa', riego: 'Cada 2d', sol: 'Parcial', temp: '15-20°C' },
+    { nombre: 'Tomate / Jitomate', riego: 'Cada 2d', sol: 'Pleno', temp: '20-26°C' },
+    { nombre: 'Lechuga', riego: 'Cada 1-2d', sol: 'Parcial', temp: '14-18°C' },
+    { nombre: 'Chile / Pimiento', riego: 'Cada 3d', sol: 'Pleno', temp: '21-28°C' }
+  ];
+
+  ngOnInit(): void {
+    this.cargarPlantasAlmacenadas();
+    this.verificarClimaParaPlantas();
+  }
+
+  private cargarPlantasAlmacenadas(): void {
+    const guardadas = localStorage.getItem('plantas_bitacora');
+    if (guardadas) {
+      this.plantas.set(JSON.parse(guardadas));
+    } else {
+      this.plantas.set(this.plantasPorDefecto);
+      this.guardarEnLocalStorage(this.plantasPorDefecto);
+    }
+  }
+
+  private guardarEnLocalStorage(lista: Planta[]): void {
+    localStorage.setItem('plantas_bitacora', JSON.stringify(lista));
+  }
 
   mesAnterior(): void {
     const fechaActual = this.fechaActualCalendario();
@@ -133,20 +173,6 @@ export class MisPlantasComponent implements OnInit {
     return planta.ultimoRiego || 'Sin registros aún';
   }
 
-  // Catálogo rápido predefinido
-  catalogoCultivos = [
-    { nombre: 'Cebolla', riego: 'Cada 3d', sol: 'Pleno', temp: '18-24°C' },
-    { nombre: 'Papa', riego: 'Cada 2d', sol: 'Parcial', temp: '15-20°C' },
-    { nombre: 'Tomate / Jitomate', riego: 'Cada 2d', sol: 'Pleno', temp: '20-26°C' },
-    { nombre: 'Lechuga', riego: 'Cada 1-2d', sol: 'Parcial', temp: '14-18°C' },
-    { nombre: 'Chile / Pimiento', riego: 'Cada 3d', sol: 'Pleno', temp: '21-28°C' }
-  ];
-
-  // Arreglo reactivo para las plantas
-  plantas = signal<Planta[]>([]);
-
-  // ================= CONEXIÓN CON LA API DE CLIMA Y BACKEND =================
-
   verificarClimaParaPlantas(): void {
     const ubicacionSeleccionada = localStorage.getItem('ubicacionClima') || 'Tepexpan';
 
@@ -167,39 +193,9 @@ export class MisPlantasComponent implements OnInit {
           color: '#FDA769'
         });
       },
-      error: (err) => console.error('Error al sincronizar el clima en Mis Plantas:', err)
+      error: (err) => console.error('Error al sincronizar clima:', err)
     });
   }
-
-  cargarPlantasDesdeBD(): void {
-    this.http.get<any[]>('http://localhost:3000/api/plantas').subscribe({
-      next: (data) => {
-        const plantasMapeadas: Planta[] = data.map(p => ({
-          id: p.id || p.id_planta,
-          nombre: p.nombre,
-          especie: p.especie || 'Cultivo Personalizado',
-          etapaDesarrollo: p.etapa_desarrollo || p.etapaDesarrollo || 'Crecimiento / Desarrollo vegetativo',
-          ubicacion: p.ubicacion,
-          imagenUrl: p.imagen_url || p.imagenUrl || '',
-          estado: 'good',
-          estadoTexto: 'Saludable',
-          riegoFrecuencia: p.riego_frecuencia || p.riegoFrecuencia || 'Cada 3d',
-          solTipo: 'Pleno',
-          tempRango: '18-25°C',
-          progresoRiego: 100,
-          progresoSol: 100,
-          progresoSalud: 100,
-          ultimoRiego: 'Hoy'
-        }));
-        this.plantas.set(plantasMapeadas);
-      },
-      error: (err) => {
-        console.error('Error al cargar plantas desde la BD, usando datos locales de respaldo:', err);
-      }
-    });
-  }
-
-  // ================= LÓGICA DE AGREGAR Y ELIMINAR =================
 
   abrirModal(): void {
     this.modalImagenUrl.set('');
@@ -219,77 +215,61 @@ export class MisPlantasComponent implements OnInit {
 
     const metadatosFoto = this.modalMetadatos();
 
-    const nuevaPlantaPayload = {
-      nombre: nombrePersonalizado,
+    const nuevaPlanta: Planta = {
+      id: Date.now().toString(),
+      nombre: nombrePersonalizado.trim(),
       especie: 'Cultivo Personalizado',
       etapaDesarrollo: etapaDesarrollo || 'Crecimiento / Desarrollo vegetativo',
       ubicacion: ubicacion,
       imagenUrl: this.modalImagenUrl(),
-      riegoFrecuencia: riegoFrecuencia || 'Cada 3d'
+      estado: 'good',
+      estadoTexto: 'Saludable',
+      riegoFrecuencia: riegoFrecuencia || 'Cada 3d',
+      solTipo: 'Pleno',
+      tempRango: '18-25°C',
+      progresoRiego: 100,
+      progresoSol: 100,
+      progresoSalud: 100,
+      puntuacionGeneral: 5,
+      fechaRegistro: new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }),
+      ultimoRiego: 'Hoy',
+      fechaCaptura: metadatosFoto?.fecha,
+      latitud: metadatosFoto?.latitud,
+      longitud: metadatosFoto?.longitud
     };
 
-    this.http.post('http://localhost:3000/api/plantas', nuevaPlantaPayload).subscribe({
-      next: (res: any) => {
-        const plantaCreada: Planta = {
-          id: res.id || res.id_planta || Date.now(),
-          nombre: nombrePersonalizado,
-          especie: 'Cultivo Personalizado',
-          etapaDesarrollo: etapaDesarrollo || 'Crecimiento / Desarrollo vegetativo',
-          ubicacion: ubicacion,
-          imagenUrl: this.modalImagenUrl(),
-          estado: 'good',
-          estadoTexto: 'Saludable',
-          riegoFrecuencia: riegoFrecuencia || 'Cada 3d',
-          solTipo: 'Pleno',
-          tempRango: '18-25°C',
-          progresoRiego: 100,
-          progresoSol: 100,
-          progresoSalud: 100,
-          ultimoRiego: 'Hoy',
-          fechaCaptura: metadatosFoto?.fecha,
-          latitud: metadatosFoto?.latitud,
-          longitud: metadatosFoto?.longitud
-        };
-
-        this.plantas.update(lista => [...lista, plantaCreada]);
-        this.cerrarModal();
-        this.mensaje.set({ texto: `¡${nombrePersonalizado} registrada con éxito en la BD!`, tipo: 'ok' });
-      },
-      error: (err) => {
-        console.error('Error al guardar la planta en la BD:', err);
-        this.mensaje.set({ texto: 'Error al guardar la planta en el servidor.', tipo: 'error' });
-      }
+    this.plantas.update(lista => {
+      const listaActualizada = [...lista, nuevaPlanta];
+      this.guardarEnLocalStorage(listaActualizada);
+      return listaActualizada;
     });
+
+    this.cerrarModal();
+    this.mensaje.set({ texto: `¡${nombrePersonalizado} registrada con éxito!`, tipo: 'ok' });
   }
 
-  registrarRiego(id: number): void {
-    this.plantas.update(lista =>
-      lista.map(p => {
+  registrarRiego(id: number | string): void {
+    this.plantas.update(lista => {
+      const listaActualizada = lista.map(p => {
         if (p.id === id) {
-          return { ...p, progresoRiego: 100, estado: 'good', estadoTexto: 'Saludable', ultimoRiego: 'Hoy' };
+          return { ...p, progresoRiego: 100, estado: 'good' as const, estadoTexto: 'Saludable', ultimoRiego: 'Hoy' };
         }
         return p;
-      })
-    );
+      });
+      this.guardarEnLocalStorage(listaActualizada);
+      return listaActualizada;
+    });
     this.mensaje.set({ texto: '¡Riego registrado! Progreso actualizado.', tipo: 'ok' });
   }
 
-  eliminarPlanta(id: number): void {
-    this.http.delete(`http://localhost:3000/api/plantas/${id}`).subscribe({
-      next: () => {
-        this.plantas.update(lista => lista.filter(p => p.id !== id));
-        this.mensaje.set({ texto: 'Planta eliminada de tu colección.', tipo: 'ok' });
-      },
-      error: (err) => {
-        console.error('Error al eliminar la planta en el servidor:', err);
-        // Eliminado localmente por respaldo si la ruta aún no está creada en backend
-        this.plantas.update(lista => lista.filter(p => p.id !== id));
-        this.mensaje.set({ texto: 'Planta eliminada correctamente.', tipo: 'ok' });
-      }
+  eliminarPlanta(id: number | string): void {
+    this.plantas.update(lista => {
+      const listaActualizada = lista.filter(p => p.id !== id);
+      this.guardarEnLocalStorage(listaActualizada);
+      return listaActualizada;
     });
+    this.mensaje.set({ texto: 'Planta eliminada de tu colección.', tipo: 'ok' });
   }
-
-  // ================= MULTIMEDIA E INTERACCIONES =================
 
   async onModalFotoSeleccionada(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -303,9 +283,7 @@ export class MisPlantasComponent implements OnInit {
       try {
         const metadatos = await this.exifService.leerMetadatos(file);
         this.modalMetadatos.set(metadatos);
-        console.log('📸 EXIF extraído en el Modal:', metadatos);
       } catch (error) {
-        console.error('La imagen del modal no contiene metadatos EXIF:', error);
         this.modalMetadatos.set(null);
       }
     }
@@ -321,47 +299,32 @@ export class MisPlantasComponent implements OnInit {
     if (!input || !input.files || input.files.length === 0) return;
 
     const file = input.files[0];
-
     let exifDetectado: any = null;
     try {
       exifDetectado = await this.exifService.leerMetadatos(file);
-      console.log(`📸 EXIF extraído para [${planta.nombre}]:`, exifDetectado);
     } catch (error) {
-      console.error('No se encontraron metadatos EXIF:', error);
+      console.error('No EXIF:', error);
     }
 
     const reader = new FileReader();
     reader.onload = () => {
-      try {
-        this.plantas.update(lista => 
-          lista.map(p => {
-            if (p && p.id === planta.id) {
-              return { 
-                ...p, 
-                imagenUrl: reader.result as string,
-                fechaCaptura: exifDetectado?.fecha || undefined,
-                latitud: exifDetectado?.latitud || undefined,
-                longitud: exifDetectado?.longitud || undefined
-              };
-            }
-            return p;
-          })
-        );
-        this.mensaje.set({ texto: `Foto de ${planta.nombre} actualizada.`, tipo: 'ok' });
-
-        const climaTemp = this.climaActual()?.temperatura || 15;
-        const climaDesc = this.climaActual()?.descripcion || 'Fresco / nublado';
-        
-        let horaFormateada = '00:00';
-        if (exifDetectado?.fecha instanceof Date) {
-          horaFormateada = exifDetectado.fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        }
-
-        alert(`De acuerdo a esta foto tomada a las ${horaFormateada} horas, el clima estuvo a ${climaTemp}°C (${climaDesc}) y tuvo una exposición solar aproximada.`);
-
-      } catch (err) {
-        console.error('Error crítico al actualizar el signal de plantas:', err);
-      }
+      this.plantas.update(lista => {
+        const listaActualizada = lista.map(p => {
+          if (p.id === planta.id) {
+            return { 
+              ...p, 
+              imagenUrl: reader.result as string,
+              fechaCaptura: exifDetectado?.fecha || undefined,
+              latitud: exifDetectado?.latitud || undefined,
+              longitud: exifDetectado?.longitud || undefined
+            };
+          }
+          return p;
+        });
+        this.guardarEnLocalStorage(listaActualizada);
+        return listaActualizada;
+      });
+      this.mensaje.set({ texto: `Foto de ${planta.nombre} actualizada.`, tipo: 'ok' });
     };
     
     reader.readAsDataURL(file);
@@ -375,5 +338,7 @@ export class MisPlantasComponent implements OnInit {
     }, 1000);
   }
 
-  cerrarMensaje(): void { this.mensaje.set(null); }
+  cerrarMensaje(): void { 
+    this.mensaje.set(null); 
+  }
 }

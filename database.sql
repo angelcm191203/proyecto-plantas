@@ -13,7 +13,7 @@ CREATE TABLE usuarios (
 DROP TABLE IF EXISTS plantas CASCADE;
 
 CREATE TABLE plantas (
-    id SERIAL PRIMARY KEY,
+    id_planta SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     especie VARCHAR(100),
     etapa_desarrollo VARCHAR(100),

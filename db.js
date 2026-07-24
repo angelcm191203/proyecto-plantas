@@ -5,7 +5,7 @@ const pool = new Pool({
     user: 'postgres',          
     host: 'localhost',
     database: 'weatherplant_db',
-    password: 'root',
+    password: '1201',  //NO SE TE OLVIDE CAMBIAR LA CONTRASEÑA SI LA TIENES DIFERENTE
     port: 5432,
 });
 
