@@ -127,16 +127,12 @@
 
           <div class="calendar-mini">
             <div class="calendar-mini-dias">
-              @for (nombreDia of nombresDia; track nombreDia) {
-                <span class="calendar-mini-encabezado">{{ nombreDia }}</span>
-              }
               @for (dia of diasDelMes(planta); track dia.claveFecha) {
                 @if (dia.fueraDeMes) {
                   <div class="dia-celda dia-vacio"></div>
                 } @else {
                   <div class="dia-celda" [class.dia-hoy]="dia.esHoy" [class.dia-futuro]="dia.esFuturo">
                     <span class="dia-numero">{{ dia.numero }}</span>
-                   
                     @if (dia.cuidadoHecho) {
                       <i class="fas fa-check dia-check"></i>
                     }

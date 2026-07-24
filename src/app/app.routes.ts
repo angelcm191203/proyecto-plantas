@@ -11,7 +11,7 @@ import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { HistoricoPlantas } from './components/historico-plantas/historico-plantas';
 import { NuevaPlantaComponent } from './components/nueva-planta/nueva-planta'; 
 import { MisPlantasComponent } from './components/mis-plantas/mis-plantas';
-import { ClimaComponent } from './components/clima/clima'; // 👈 1. IMPORTAMOS EL NUEVO COMPONENTE DEL CLIMA
+import { ClimaComponent } from './components/clima/clima';
 
 export const routes: Routes = [
   // 1. Ruta de administrador primero para mayor prioridad
@@ -25,6 +25,7 @@ export const routes: Routes = [
       { path: 'peticiones', component: Peticiones }
     ]
   },
+  
   // 2. Rutas estándar
   { path: 'login', component: LoginComponent },
   
@@ -33,20 +34,16 @@ export const routes: Routes = [
     path: 'dashboard', 
     component: DashboardComponent,
     children: [
-      // 💡 ¡CAMBIO AQUÍ! Al entrar a /dashboard, ahora te redirige directo al clima por defecto
       { path: '', redirectTo: 'clima', pathMatch: 'full' }, 
-      
-      // Los caminos correspondientes a tus botones:
       { path: 'agregar', component: NuevaPlantaComponent }, 
       { path: 'bitacora', component: HistoricoPlantas },   
-      
-      // 💡 ¡CORREGIDO AQUÍ! Vinculamos la ruta con tu nuevo ClimaComponent del gatito negro
       { path: 'clima', component: ClimaComponent },        
       { path: 'mis-plantas', component: MisPlantasComponent }  
     ]
   },
 
   { path: '', component: InicioComponent },
+  
   // 3. Comodín al final
   { path: '**', redirectTo: '' }
 ];

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../service/auth.service';
+import { ApiService } from '../../servicios/api';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder, 
     private router: Router,
-    private auth: AuthService,
+    private apiService: ApiService,
     private route: ActivatedRoute
   ) {}
 
@@ -57,40 +57,55 @@ export class LoginComponent implements OnInit {
   seleccionarAvatar(avatar: string): void {
     this.avatarSeleccionado = avatar;
   }
-
-  onLoginSubmit(): void {
+onLoginSubmit(): void {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
+      
+      const credenciales = {
+        correo: email,
+        contrasena: password
+      };
 
-      if (password === '123456') {
-        if (email === 'angel@weatherplant.com') {
-          this.auth.iniciarSesion('Angel');
-        } else if (email === 'michel@weatherplant.com') {
-          this.auth.iniciarSesion('Michel');
-        } else {
-          this.auth.iniciarSesion('UsuarioCliente');
-        }
-
-        if (this.auth.esAdministrador()) {
-          this.router.navigate(['/admin/credenciales']); 
-        } else {
+      this.apiService.loginUsuario(credenciales).subscribe({
+        next: (res: any) => {
+          console.log('Inicio de sesión exitoso:', res);
+          alert('¡Bienvenido a WeatherPlant!');
           this.router.navigate(['/dashboard']);
+        },
+        error: (err: any) => {
+          console.error('Error de autenticación en la BD:', err);
+          alert('Correo o contraseña incorrectos.');
         }
-      } else {
-        alert('Credenciales incorrectas.');
-      }
+      });
+    } else {
+      alert('Por favor, completa los campos del login.');
     }
   }
 
   onRegisterSubmit(): void {
     if (this.registerForm.valid) {
+      const formValue = this.registerForm.value;
+      
       const datosRegistro = {
-        ...this.registerForm.value,
+        nombre: formValue.nombre,
+        correo: formValue.email,
+        contrasena: formValue.password,
+        ubicacion: formValue.ubicacion,
         avatar: this.avatarSeleccionado
       };
-      console.log('Datos de registro con avatar:', datosRegistro);
-      alert(`¡Registro simulado con éxito! Avatar elegido: ${this.avatarSeleccionado}. Ahora puedes iniciar sesión.`);
-      this.isSignUpMode = false;
+
+      this.apiService.registrarUsuario(datosRegistro).subscribe({
+        next: (res: any) => {
+          console.log('Usuario registrado con éxito en la BD:', res);
+          alert(`¡Registro exitoso! Avatar elegido: ${this.avatarSeleccionado}. Ahora puedes iniciar sesión.`);
+          this.isSignUpMode = false;
+          this.registerForm.reset();
+        },
+        error: (err: any) => {
+          console.error('Error al registrar usuario en la BD:', err);
+          alert('Hubo un error al registrarse en la base de datos.');
+        }
+      });
     } else {
       alert('Por favor, completa todos los campos del formulario de registro.');
     }

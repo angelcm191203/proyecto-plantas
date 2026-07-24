@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Probar Registro Corregido</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        input { margin-bottom: 10px; padding: 8px; width: 300px; }
+        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h2>Registrar Usuario de Prueba (Ahora con Contraseña)</h2>
+    <form id="formUsuario">
+        <!-- Campos obligatorios según el error de la BD -->
+        <label for="nombre">Nombre:</label><br>
+        <input type="text" id="nombre" required><br>
+
+        <label for="correo">Correo:</label><br>
+        <input type="email" id="correo" required><br>
+
+        <label for="contrasena">Contraseña (Obligatoria):</label><br>
+        <input type="password" id="contrasena" required><br>
+
+        <label for="rol">Rol (Opcional, por defecto 'Usuario'):</label><br>
+        <input type="text" id="rol" placeholder="Ej. Administrador"><br>
+
+        <button type="submit">Guardar en BD</button>
+    </form>
+
+    <h3>Respuesta del Servidor:</h3>
+    <pre id="resultado"></pre>
+
+    <script>
+        document.getElementById('formUsuario').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const correo = document.getElementById('correo').value;
+            const contrasena = document.getElementById('contrasena').value;
+            const rol = document.getElementById('rol').value; // Se envía aunque esté vacío
+
+            try {
+                const respuesta = await fetch('http://localhost:3000/api/usuarios', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    // Enviamos todos los datos, incluyendo la contraseña y el rol
+                    body: JSON.stringify({ nombre, correo, contrasena, rol })
+                });
+
+                const datos = await respuesta.json();
+                
+                if (!respuesta.ok) {
+                    // Si hay error, lo mostramos en rojo
+                    document.getElementById('resultado').style.color = 'red';
+                    document.getElementById('resultado').textContent = "Error: " + JSON.stringify(datos, null, 2);
+                } else {
+                    // Si tiene éxito, mostramos el usuario creado en verde
+                    document.getElementById('resultado').style.color = 'green';
+                    document.getElementById('resultado').textContent = "Éxito, usuario creado:\n" + JSON.stringify(datos, null, 2);
+                }
+                
+            } catch (error) {
+                document.getElementById('resultado').style.color = 'red';
+                document.getElementById('resultado').textContent = "Error de conexión: " + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
